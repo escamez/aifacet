@@ -8,8 +8,8 @@ AIME is a personal context vault that stores your profile, preferences, and data
 
 - **Encrypted vault** — AES-256-GCM with per-write random IV/salt. Your data never leaves your machine unencrypted.
 - **Consent-based access** — Constitutional rules and per-provider policies control what each AI can see.
-- **MCP integration** — Works with Claude, Perplexity, ChatGPT, Cursor, VS Code/Copilot, and any MCP-compatible client.
-- **Two transports** — Local stdio (for Claude Code) and Streamable HTTP/HTTPS (for remote AI clients).
+- **MCP integration** — Works with Claude, ChatGPT, Perplexity, Cursor, VS Code/Copilot, and any MCP-compatible client.
+- **Two transports** — Local stdio (for Claude Code, Cursor, etc.) and Streamable HTTP/HTTPS (for remote AI clients).
 - **CLI management** — Start/stop server, manage vault, configure everything from the terminal.
 
 ## Architecture
@@ -56,7 +56,7 @@ After this, the `aime` command is available system-wide.
 
 ## Running the MCP Server
 
-### Local (stdio) — for Claude Code
+### Local (stdio) — for Claude Code, Cursor, etc.
 
 Add to your `.mcp.json` or MCP client configuration:
 
