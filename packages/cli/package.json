@@ -1,0 +1,23 @@
+{
+  "name": "@aime/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for managing your AIME context",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "aime": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "start": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@aime/schema": "workspace:*",
+    "@aime/vault": "workspace:*"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@aime/vault",
+  "version": "0.1.0",
+  "description": "Local encrypted storage for human AI context",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@aime/schema": "workspace:*"
+  },
+  "files": [
+    "dist"
+  ]
+}
