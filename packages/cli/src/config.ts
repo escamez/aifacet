@@ -18,17 +18,21 @@ export interface AimeConfig {
   https: boolean;
   tlsCert?: string;
   tlsKey?: string;
+  logFile: string;
 }
 
 const AIME_DIR = join(homedir(), '.aime');
 const CONFIG_PATH = join(AIME_DIR, 'config.json');
 const PID_PATH = join(AIME_DIR, 'aime.pid');
 
+const LOG_PATH = join(AIME_DIR, 'server.log');
+
 const DEFAULTS: AimeConfig = {
   passphrase: 'default-dev-passphrase',
   vaultPath: join(AIME_DIR, 'vault'),
   port: 3300,
   https: false,
+  logFile: LOG_PATH,
 };
 
 // ---------------------------------------------------------------------------
@@ -129,6 +133,7 @@ export function configToEnv(config: AimeConfig): Record<string, string> {
     AIME_PASSPHRASE: config.passphrase,
     AIME_VAULT_PATH: config.vaultPath,
     AIME_MCP_PORT: String(config.port),
+    AIME_LOG_FILE: config.logFile,
   };
   if (config.https) env.AIME_MCP_HTTPS = 'true';
   if (config.tlsCert) env.AIME_MCP_TLS_CERT = config.tlsCert;

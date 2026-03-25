@@ -61,138 +61,133 @@ function printHelp(): void {
   console.log('  config                       Show current configuration');
   console.log('  config set <key> <value>     Update a configuration value');
   console.log('');
-  console.log('Config keys: passphrase, vaultPath, port, https, tlsCert, tlsKey');
+  console.log('Config keys: passphrase, vaultPath, port, https, tlsCert, tlsKey, logFile');
 }
+
+function handleStatus(args: string[]): void {
+  const vault = openVault(args);
+  const ctx = vault.getContext();
+  console.log('AIME Context Vault');
+  console.log(`  ID:           ${ctx.id}`);
+  console.log(`  Version:      ${ctx.version}`);
+  console.log(`  Facets:       ${ctx.facets.length}`);
+  console.log(`  Policies:     ${ctx.policies.length}`);
+  console.log(`  Constitution: ${ctx.constitution.length}`);
+  console.log(`  Created:      ${ctx.createdAt}`);
+  console.log(`  Updated:      ${ctx.updatedAt}`);
+  console.log('');
+  serverStatus();
+}
+
+function handleAdd(args: string[]): void {
+  const category = args[1];
+  const key = args[2];
+  const value = args[3];
+  if (!category || !key || !value) {
+    console.error('Usage: aime add <category> <key> <value>');
+    process.exit(1);
+  }
+  const vault = openVault(args);
+  vault.addFacet({
+    category,
+    key,
+    value,
+    meta: {
+      updatedAt: new Date().toISOString(),
+      source: 'self-reported',
+      confidence: 1.0,
+      accessLevel: 'full',
+    },
+  });
+  console.log(`Added facet: ${category}/${key}`);
+}
+
+function handleSeed(args: string[]): void {
+  const seedConfig = loadConfig(args);
+  if (args.includes('--reset')) {
+    resetVault(seedConfig.vaultPath);
+  }
+  const vault = openVault(args);
+  seedVault(vault);
+}
+
+function handleReset(args: string[]): void {
+  const config = loadConfig(args);
+  resetVault(config.vaultPath);
+  Vault.open({ storagePath: config.vaultPath, passphrase: config.passphrase });
+  console.log(`Empty vault created at: ${config.vaultPath}`);
+}
+
+function handleConfigSet(args: string[]): void {
+  const key = args[2];
+  const value = args[3];
+  if (!key || value === undefined) {
+    console.error('Usage: aime config set <key> <value>');
+    process.exit(1);
+  }
+  const config = loadConfig();
+  if (!(key in config)) {
+    console.error(`Unknown config key: ${key}`);
+    console.error('Valid keys: passphrase, vaultPath, port, https, tlsCert, tlsKey, logFile');
+    process.exit(1);
+  }
+  const record = config as unknown as Record<string, unknown>;
+  if (key === 'port') {
+    record[key] = Number(value);
+  } else if (key === 'https') {
+    record[key] = value === 'true';
+  } else {
+    record[key] = value;
+  }
+  saveConfig(config);
+  console.log(`Config updated: ${key} = ${value}`);
+}
+
+function handleConfigShow(): void {
+  const config = loadConfig();
+  console.log(`AIME Configuration (${getConfigPath()})`);
+  console.log('');
+  for (const [k, v] of Object.entries(config)) {
+    const display = k === 'passphrase' ? '********' : String(v);
+    console.log(`  ${k}: ${display}`);
+  }
+}
+
+function handleConfig(args: string[]): void {
+  if (args[1] === 'set') {
+    handleConfigSet(args);
+  } else {
+    handleConfigShow();
+  }
+}
+
+const commands: Record<string, (args: string[]) => void> = {
+  start: (args) => startServer(args),
+  stop: () => stopServer(),
+  restart: (args) => {
+    stopServer();
+    setTimeout(() => startServer(args), 500);
+  },
+  status: handleStatus,
+  facets: (args) => {
+    const vault = openVault(args);
+    console.log(JSON.stringify(vault.getFacets(args[1]), null, 2));
+  },
+  add: handleAdd,
+  seed: handleSeed,
+  reset: handleReset,
+  config: handleConfig,
+};
 
 function main(): void {
   const args = process.argv.slice(2);
-  const command = args[0];
-
-  // Ensure config file exists on first run
   initConfigIfNeeded();
 
-  switch (command) {
-    // --- Server commands ---
-    case 'start': {
-      startServer(args);
-      break;
-    }
-    case 'stop': {
-      stopServer();
-      break;
-    }
-    case 'restart': {
-      stopServer();
-      setTimeout(() => startServer(args), 500);
-      break;
-    }
-
-    // --- Vault commands ---
-    case 'status': {
-      const vault = openVault(args);
-      const ctx = vault.getContext();
-      console.log('AIME Context Vault');
-      console.log(`  ID:           ${ctx.id}`);
-      console.log(`  Version:      ${ctx.version}`);
-      console.log(`  Facets:       ${ctx.facets.length}`);
-      console.log(`  Policies:     ${ctx.policies.length}`);
-      console.log(`  Constitution: ${ctx.constitution.length}`);
-      console.log(`  Created:      ${ctx.createdAt}`);
-      console.log(`  Updated:      ${ctx.updatedAt}`);
-      console.log('');
-      serverStatus();
-      break;
-    }
-    case 'facets': {
-      const vault = openVault(args);
-      const category = args[1];
-      const facets = vault.getFacets(category);
-      console.log(JSON.stringify(facets, null, 2));
-      break;
-    }
-    case 'add': {
-      const category = args[1];
-      const key = args[2];
-      const value = args[3];
-      if (!category || !key || !value) {
-        console.error('Usage: aime add <category> <key> <value>');
-        process.exit(1);
-      }
-      const vault = openVault(args);
-      vault.addFacet({
-        category,
-        key,
-        value,
-        meta: {
-          updatedAt: new Date().toISOString(),
-          source: 'self-reported',
-          confidence: 1.0,
-          accessLevel: 'full',
-        },
-      });
-      console.log(`Added facet: ${category}/${key}`);
-      break;
-    }
-    case 'seed': {
-      const seedConfig = loadConfig(args);
-      const doReset = args.includes('--reset');
-      if (doReset) {
-        resetVault(seedConfig.vaultPath);
-      }
-      const vault = openVault(args);
-      seedVault(vault);
-      break;
-    }
-    case 'reset': {
-      const resetConfig = loadConfig(args);
-      resetVault(resetConfig.vaultPath);
-      Vault.open({ storagePath: resetConfig.vaultPath, passphrase: resetConfig.passphrase });
-      console.log(`Empty vault created at: ${resetConfig.vaultPath}`);
-      break;
-    }
-
-    // --- Config commands ---
-    case 'config': {
-      const subcommand = args[1];
-      if (subcommand === 'set') {
-        const key = args[2];
-        const value = args[3];
-        if (!key || value === undefined) {
-          console.error('Usage: aime config set <key> <value>');
-          process.exit(1);
-        }
-        const config = loadConfig();
-        if (!(key in config)) {
-          console.error(`Unknown config key: ${key}`);
-          console.error('Valid keys: passphrase, vaultPath, port, https, tlsCert, tlsKey');
-          process.exit(1);
-        }
-        // Type coercion for non-string fields
-        const record = config as unknown as Record<string, unknown>;
-        if (key === 'port') {
-          record[key] = Number(value);
-        } else if (key === 'https') {
-          record[key] = value === 'true';
-        } else {
-          record[key] = value;
-        }
-        saveConfig(config);
-        console.log(`Config updated: ${key} = ${value}`);
-      } else {
-        const config = loadConfig();
-        console.log(`AIME Configuration (${getConfigPath()})`);
-        console.log('');
-        for (const [k, v] of Object.entries(config)) {
-          const display = k === 'passphrase' ? '********' : String(v);
-          console.log(`  ${k}: ${display}`);
-        }
-      }
-      break;
-    }
-
-    default:
-      printHelp();
-      break;
+  const handler = commands[args[0] ?? ''];
+  if (handler) {
+    handler(args);
+  } else {
+    printHelp();
   }
 }
 

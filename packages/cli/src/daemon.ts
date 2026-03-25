@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, openSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { configToEnv, getMcpHttpPath, getPidPath, loadConfig } from './config.js';
 
 function readPid(): number | undefined {
@@ -39,10 +39,12 @@ export function startServer(argv: string[] = []): void {
   const env = { ...process.env, ...configToEnv(config) };
   const protocol = config.https ? 'https' : 'http';
 
+  // Redirect server output to log file instead of discarding it
+  const logFd = openSync(config.logFile, 'a');
   const child = spawn('node', [mcpHttp], {
     env,
     detached: true,
-    stdio: 'ignore',
+    stdio: ['ignore', logFd, logFd],
   });
 
   child.unref();
@@ -52,6 +54,7 @@ export function startServer(argv: string[] = []): void {
     console.log(`AIME server started (PID ${child.pid})`);
     console.log(`  ${protocol.toUpperCase()} → ${protocol}://localhost:${config.port}/mcp`);
     console.log(`  Health → ${protocol}://localhost:${config.port}/health`);
+    console.log(`  Logs   → ${config.logFile}`);
   } else {
     console.error('Failed to start AIME server');
     process.exit(1);
