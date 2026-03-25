@@ -12,7 +12,7 @@ graph TB
     subgraph USER["👤 User Device"]
         direction TB
         CLI["<b>@aime/cli</b><br/>Command Line Interface"]
-        UI["<b>Future: Web UI</b><br/>Consent Dashboard"]
+        WEB["<b>@aime/web</b><br/>Web UI Dashboard<br/><i>React · Vite · Tailwind</i>"]
 
         subgraph CORE["Core Engine"]
             direction TB
@@ -22,8 +22,8 @@ graph TB
             AUDIT["<b>Audit Log</b><br/><i>Who accessed what, when</i>"]
         end
 
+        API["<b>@aime/api</b><br/>HTTP REST API<br/><i>Hono · Plugin-based</i>"]
         MCP["<b>@aime/mcp-server</b><br/>Model Context Protocol<br/><i>Resources · Tools</i>"]
-        BROKER["<b>Future: Context Broker</b><br/>REST API / Protocol<br/><i>Serves authorized facets</i>"]
     end
 
     subgraph PROVIDERS["🤖 AI Providers"]
@@ -34,32 +34,31 @@ graph TB
     end
 
     CLI --> VAULT
-    UI -.-> VAULT
+    WEB --> API
+    API --> VAULT
     VAULT --> SCHEMA
     VAULT --> CONSENT
     CONSENT --> AUDIT
     MCP --> VAULT
     MCP --> CONSENT
-    BROKER -.-> VAULT
-    BROKER -.-> CONSENT
 
     MCP --> CLAUDE
-    BROKER -.-> GPT
-    BROKER -.-> GEMINI
-    BROKER -.-> OTHER
+    API -.-> GPT
+    API -.-> GEMINI
+    API -.-> OTHER
 
     style USER fill:#0d1117,stroke:#4a9eff,stroke-width:2px,color:#e8e8e8
     style CORE fill:#1a2332,stroke:#30363d,stroke-width:1px,color:#e8e8e8
     style PROVIDERS fill:#0d1117,stroke:#f0883e,stroke-width:2px,color:#e8e8e8
 
     style CLI fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
-    style UI fill:#1a2332,stroke:#30363d,stroke-dasharray:5 5,color:#8899aa
+    style WEB fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
     style SCHEMA fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
     style VAULT fill:#1f3a1f,stroke:#3fb950,color:#e8e8e8
     style CONSENT fill:#3a1f3a,stroke:#bc8cff,color:#e8e8e8
     style AUDIT fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style API fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
     style MCP fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
-    style BROKER fill:#1a2332,stroke:#30363d,stroke-dasharray:5 5,color:#8899aa
 
     style CLAUDE fill:#2d1a3a,stroke:#bc8cff,color:#e8e8e8
     style GPT fill:#1a2332,stroke:#30363d,stroke-dasharray:5 5,color:#8899aa
@@ -110,18 +109,152 @@ graph LR
     VAULT["@aime/vault<br/><i>Storage + Consent</i>"]
     MCP["@aime/mcp-server<br/><i>MCP Protocol</i>"]
     CLI["@aime/cli<br/><i>CLI Tool</i>"]
+    API["@aime/api<br/><i>REST API</i>"]
+    WEB["@aime/web<br/><i>Web UI</i>"]
 
     VAULT --> SCHEMA
     MCP --> VAULT
     MCP --> SCHEMA
     CLI --> VAULT
     CLI --> SCHEMA
+    API --> VAULT
+    API --> SCHEMA
+    WEB -.->|HTTP| API
 
     style SCHEMA fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
     style VAULT fill:#1f3a1f,stroke:#3fb950,color:#e8e8e8
     style MCP fill:#2d1a3a,stroke:#bc8cff,color:#e8e8e8
     style CLI fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style API fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
+    style WEB fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
 ```
+
+---
+
+## API Plugin System
+
+The `@aime/api` package uses a plugin architecture built on [Hono](https://hono.dev). Each plugin is a self-contained module that registers routes on a base path. The main application composes all plugins under `/api`.
+
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#4a9eff', 'primaryTextColor': '#e8e8e8', 'primaryBorderColor': '#6bb3ff', 'lineColor': '#8899aa', 'secondaryColor': '#2d5a8a', 'tertiaryColor': '#1a3550'}}}%%
+
+graph TB
+    subgraph APP["Hono Application"]
+        direction TB
+        MW["Middleware<br/><i>logger · cors</i>"]
+
+        subgraph PLUGINS["API Plugins (mounted under /api)"]
+            direction LR
+            HEALTH["<b>health</b><br/>/api/health<br/><i>GET /</i>"]
+            FACETS["<b>facets</b><br/>/api/facets<br/><i>GET / · POST / · DELETE /:cat/:key</i>"]
+            POLICIES["<b>policies</b><br/>/api/policies<br/><i>GET / · POST /</i>"]
+            CONSTITUTION["<b>constitution</b><br/>/api/constitution<br/><i>GET / · POST /</i>"]
+            TRANSFER["<b>import-export</b><br/>/api/transfer<br/><i>GET /export · POST /import</i>"]
+        end
+
+        LISTING["/api/plugins<br/><i>Lists all registered plugins</i>"]
+    end
+
+    subgraph CORE["Core Layer"]
+        VAULT["@aime/vault"]
+        SCHEMA["@aime/schema"]
+    end
+
+    MW --> PLUGINS
+    HEALTH --> VAULT
+    FACETS --> VAULT
+    POLICIES --> VAULT
+    CONSTITUTION --> VAULT
+    TRANSFER --> VAULT
+    VAULT --> SCHEMA
+
+    style APP fill:#0d1117,stroke:#4a9eff,stroke-width:2px,color:#e8e8e8
+    style PLUGINS fill:#1a2332,stroke:#30363d,stroke-width:1px,color:#e8e8e8
+    style CORE fill:#1a2332,stroke:#30363d,stroke-width:1px,color:#e8e8e8
+    style MW fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style LISTING fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style HEALTH fill:#1f3a1f,stroke:#3fb950,color:#e8e8e8
+    style FACETS fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
+    style POLICIES fill:#3a1f3a,stroke:#bc8cff,color:#e8e8e8
+    style CONSTITUTION fill:#3a1f1f,stroke:#f85149,color:#e8e8e8
+    style TRANSFER fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style VAULT fill:#1f3a1f,stroke:#3fb950,color:#e8e8e8
+    style SCHEMA fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
+```
+
+**How API plugins work:**
+
+1. A factory function (e.g., `createFacetsPlugin(vault)`) creates a Hono sub-app with routes.
+2. The factory returns an `ApiPlugin` object: `{ id, name, basePath, routes }`.
+3. The main app iterates all plugins and calls `api.route(plugin.basePath, plugin.routes)`.
+4. All plugins are discoverable via `GET /api/plugins`.
+
+---
+
+## Web Plugin System
+
+The `@aime/web` package uses a plugin architecture built on React Router and a central registry. Each plugin registers navigation items and routes via side-effect imports.
+
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#4a9eff', 'primaryTextColor': '#e8e8e8', 'primaryBorderColor': '#6bb3ff', 'lineColor': '#8899aa', 'secondaryColor': '#2d5a8a', 'tertiaryColor': '#1a3550'}}}%%
+
+graph TB
+    subgraph WEBAPP["React Application"]
+        direction TB
+        ROUTER["BrowserRouter<br/><i>React Router</i>"]
+        SHELL["Shell Layout<br/><i>Sidebar · Navigation · Content</i>"]
+
+        subgraph REGISTRY["Plugin Registry"]
+            REG["registerPlugin()"]
+            GET["getPlugins()"]
+        end
+
+        subgraph WPLUGINS["Web Plugins"]
+            direction LR
+            DASH["<b>dashboard</b><br/>/<br/><i>DashboardPage</i>"]
+            WFACETS["<b>facets</b><br/>/facets<br/><i>FacetsPage</i>"]
+            WPOLICIES["<b>policies</b><br/>/consent<br/><i>PoliciesPage</i>"]
+            WTRANSFER["<b>import-export</b><br/>/transfer<br/><i>ImportExportPage</i>"]
+        end
+    end
+
+    subgraph BACKEND["Backend"]
+        BAPI["@aime/api<br/><i>HTTP REST API</i>"]
+    end
+
+    ROUTER --> SHELL
+    SHELL --> WPLUGINS
+    DASH --> REG
+    WFACETS --> REG
+    WPOLICIES --> REG
+    WTRANSFER --> REG
+    GET --> SHELL
+    WFACETS -->|fetch| BAPI
+    WPOLICIES -->|fetch| BAPI
+    WTRANSFER -->|fetch| BAPI
+
+    style WEBAPP fill:#0d1117,stroke:#4a9eff,stroke-width:2px,color:#e8e8e8
+    style REGISTRY fill:#1a2332,stroke:#30363d,stroke-width:1px,color:#e8e8e8
+    style WPLUGINS fill:#1a2332,stroke:#30363d,stroke-width:1px,color:#e8e8e8
+    style BACKEND fill:#1a2332,stroke:#30363d,stroke-width:1px,color:#e8e8e8
+    style ROUTER fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style SHELL fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style REG fill:#3a1f3a,stroke:#bc8cff,color:#e8e8e8
+    style GET fill:#3a1f3a,stroke:#bc8cff,color:#e8e8e8
+    style DASH fill:#1f3a1f,stroke:#3fb950,color:#e8e8e8
+    style WFACETS fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
+    style WPOLICIES fill:#3a1f3a,stroke:#bc8cff,color:#e8e8e8
+    style WTRANSFER fill:#2d2d1a,stroke:#d29922,color:#e8e8e8
+    style BAPI fill:#1a3550,stroke:#4a9eff,color:#e8e8e8
+```
+
+**How Web plugins work:**
+
+1. Each plugin is a directory under `packages/web/src/plugins/{name}/` with an `index.tsx` entry point.
+2. The entry point calls `registerPlugin()` with the plugin's id, label, icon, nav items, and routes.
+3. Registration happens via side-effect imports in `app.tsx` — import order determines nav order.
+4. The `Shell` component reads `getPlugins()` to build the sidebar navigation.
+5. The `App` component renders all plugin routes inside a shared `<Routes>` tree.
 
 ---
 
@@ -170,15 +303,22 @@ flowchart TD
 aime/
 ├── package.json              Root workspace config
 ├── pnpm-workspace.yaml       Workspace definition
+├── docker-compose.yml        Docker stack (API + Web)
 ├── tsconfig.base.json        Shared TypeScript config (strict)
 ├── biome.json                Linting & formatting (Biome v2)
 ├── vitest.workspace.ts       Test workspace config
 ├── .husky/pre-commit         Pre-commit: lint check
 │
 ├── docs/
+│   ├── GETTING_STARTED.md    Getting started guide
+│   ├── TESTING.md            Testing & validation guide
+│   ├── PLUGIN_GUIDE.md       Plugin development guide
 │   ├── design/               Design documents & architecture
 │   ├── research/             Market analysis & research
 │   └── business/             Monetization & startup roadmap
+│
+├── scripts/
+│   └── sandbox.sh            Quick validation script
 │
 └── packages/
     ├── schema/               @aime/schema — Core types
@@ -186,25 +326,67 @@ aime/
     │   │   ├── access.ts     AccessLevel, ConsentPolicy, ConstitutionalRule
     │   │   ├── facet.ts      Facet, FacetMeta, categories
     │   │   └── context.ts    HumanContext, createEmptyContext
-    │   └── tests/            16 tests
+    │   └── tests/
     │
     ├── vault/                @aime/vault — Encrypted storage
     │   ├── src/
     │   │   ├── storage.ts    AES-256-GCM encrypted file I/O
     │   │   └── vault.ts      Vault API (CRUD, consent enforcement)
-    │   └── tests/            14 tests
+    │   └── tests/
     │
     ├── mcp-server/           @aime/mcp-server — Claude integration
     │   ├── src/
     │   │   └── index.ts      MCP resources + tools (get_facets, get_authorized_context)
-    │   └── tests/            1 test
+    │   └── tests/
     │
-    └── cli/                  @aime/cli — Command line tool
-        └── src/
-            └── index.ts      status, facets, add commands
+    ├── cli/                  @aime/cli — Command line tool
+    │   └── src/
+    │       └── index.ts      status, facets, add commands
+    │
+    ├── api/                  @aime/api — HTTP REST API
+    │   ├── Dockerfile
+    │   ├── src/
+    │   │   ├── index.ts      Hono app, plugin composition, server startup
+    │   │   └── plugins/
+    │   │       ├── types.ts          ApiPlugin interface
+    │   │       ├── health.ts         GET /api/health
+    │   │       ├── facets.ts         CRUD /api/facets
+    │   │       ├── policies.ts       CRUD /api/policies
+    │   │       ├── constitution.ts   CRUD /api/constitution
+    │   │       └── import-export.ts  GET /api/transfer/export, POST /api/transfer/import
+    │   └── tests/
+    │
+    └── web/                  @aime/web — Web UI
+        ├── Dockerfile
+        ├── src/
+        │   ├── app.tsx       Root component, plugin imports, router
+        │   ├── components/
+        │   │   └── layout/
+        │   │       └── shell.tsx     Shell layout with sidebar navigation
+        │   └── plugins/
+        │       ├── registry/
+        │       │   ├── types.ts      WebPlugin, NavItem interfaces
+        │       │   └── index.ts      registerPlugin(), getPlugins()
+        │       ├── dashboard/
+        │       │   ├── index.tsx          Plugin registration
+        │       │   └── pages/
+        │       │       └── dashboard-page.tsx
+        │       ├── facets/
+        │       │   ├── index.tsx
+        │       │   └── pages/
+        │       │       └── facets-page.tsx
+        │       ├── policies/
+        │       │   ├── index.tsx
+        │       │   └── pages/
+        │       │       └── policies-page.tsx
+        │       └── import-export/
+        │           ├── index.tsx
+        │           └── pages/
+        │               └── import-export-page.tsx
+        └── tests/
 ```
 
 ---
 
-*Document generated: 2026-03-25*
+*Document updated: 2026-03-25*
 *Project: AIME*
