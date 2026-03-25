@@ -2,7 +2,7 @@
   "name": "aime",
   "private": true,
   "description": "Your AI context, owned by you. Portable across any AI.",
-  "license": "Apache-2.0",
+  "license": "EUPL-1.2",
   "engines": {
     "node": ">=22.0.0",
     "pnpm": ">=10.0.0"

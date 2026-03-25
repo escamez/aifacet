@@ -247,4 +247,4 @@ AI Client ──MCP──► AIME Server ──► Vault
 
 ## License
 
-Apache-2.0
+[European Union Public Licence v1.2 (EUPL-1.2)](./LICENSE) — the open-source licence created by the European Commission. Copyleft with broad compatibility (GPL, AGPL, MPL, and more). Available in 23 EU languages.
