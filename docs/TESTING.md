@@ -369,13 +369,13 @@ After adding the MCP config, restart Claude Code so it picks up the new server.
 In a new Claude Code conversation, try:
 
 ```
-Use the get_facets tool to see what context you have about me.
+Use the about_me tool to see what context you have about me.
 ```
 
 Or more specifically:
 
 ```
-Use get_authorized_context with provider_id "claude" to see what facets are authorized for you.
+Use what_can_you_know with provider_id "claude" to see what facets are authorized for you.
 ```
 
 If it works, Claude will respond with your context facets. **This proves the full pipeline: vault -> MCP -> Claude.**

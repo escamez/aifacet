@@ -327,7 +327,7 @@ Claude Code needs a restart to pick up the new MCP server.
 In a new Claude Code conversation:
 
 ```
-Use the get_facets tool to see what context you have about me.
+Use the about_me tool to see what context you have about me.
 ```
 
 Claude should respond with your stored facets. This confirms the full pipeline:

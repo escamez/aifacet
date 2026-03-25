@@ -84,7 +84,7 @@ sequenceDiagram
     participant Vault as @aime/vault
     participant Disk as 🔒 Encrypted Storage
 
-    AI->>MCP: get_authorized_context(provider_id)
+    AI->>MCP: what_can_you_know(provider_id)
     MCP->>Vault: getAuthorizedFacets(provider_id)
     Vault->>Consent: Check constitutional rules
     Consent-->>Vault: Apply access policies
@@ -336,7 +336,7 @@ aime/
     │
     ├── mcp-server/           @aime/mcp-server — Claude integration
     │   ├── src/
-    │   │   └── index.ts      MCP resources + tools (get_facets, get_authorized_context)
+    │   │   └── index.ts      MCP resources + tools (about_me, what_can_you_know)
     │   └── tests/
     │
     ├── cli/                  @aime/cli — Command line tool
