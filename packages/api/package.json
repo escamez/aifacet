@@ -1,0 +1,20 @@
+{
+  "name": "@aime/api",
+  "version": "0.1.0",
+  "description": "HTTP API for AIME context management",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@aime/schema": "workspace:*",
+    "@aime/vault": "workspace:*",
+    "@hono/node-server": "^1.14.1",
+    "hono": "^4.7.11"
+  }
+}

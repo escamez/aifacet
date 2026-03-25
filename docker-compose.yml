@@ -1,0 +1,25 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    ports:
+      - "3100:3100"
+    environment:
+      - AIME_VAULT_PATH=/data/vault
+      - AIME_PASSPHRASE=${AIME_PASSPHRASE:-dev-passphrase}
+      - AIME_API_PORT=3100
+    volumes:
+      - vault-data:/data/vault
+
+  web:
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+    ports:
+      - "3200:3200"
+    depends_on:
+      - api
+
+volumes:
+  vault-data:
