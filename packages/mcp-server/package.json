@@ -17,6 +17,7 @@
   "scripts": {
     "build": "tsup",
     "start": "tsx src/index.ts",
+    "start:http": "tsx src/http.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
