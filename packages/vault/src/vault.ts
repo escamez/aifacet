@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type { ConsentPolicy, ConstitutionalRule, Facet, HumanContext } from '@aime/schema';
 import { createEmptyContext } from '@aime/schema';
 import { EncryptedStorage } from './storage.js';
@@ -35,7 +36,7 @@ export class Vault {
       const raw = storage.read(CONTEXT_FILENAME, options.passphrase);
       context = JSON.parse(raw) as HumanContext;
     } else {
-      const id = crypto.randomUUID();
+      const id = randomUUID();
       context = createEmptyContext(id);
       storage.write(CONTEXT_FILENAME, JSON.stringify(context), options.passphrase);
     }
