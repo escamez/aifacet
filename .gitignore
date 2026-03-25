@@ -10,12 +10,23 @@ dist/
 .env.*
 !.env.example
 
-# IDE
+# IDE and editor config
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# AI assistant config (developer-local)
+.claude/
+.cursor/
+.continue/
+.aider*
+.codeium/
+.cody/
+.copilot/
+CLAUDE.md
+.mcp.json
 
 # OS
 .DS_Store
@@ -35,3 +46,6 @@ pnpm-debug.log*
 # Temporary
 tmp/
 .tmp/
+
+# Session notes (developer-local)
+NEXT_SESSION_INSTRUCTIONS.md
