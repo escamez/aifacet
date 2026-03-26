@@ -32,27 +32,21 @@ packages/
 ## Getting Started
 
 ```bash
-# Clone and install
+# Clone the repository
 git clone <repo-url> && cd contextme
-pnpm install
 
-# Build all packages
-pnpm build
+# Check dependencies and set up everything
+make doctor    # verify Node 22+, pnpm 10+, openssl
+make init      # install deps, build, link CLI globally
 
-# Seed the vault with sample profile data
-AIME_PASSPHRASE=test aime seed --reset
+# Seed the vault with a sample profile
+make seed
 
-# Verify MCP tools work
-AIME_PASSPHRASE=test aime status
+# Run the consent filtering demo
+make demo
 ```
 
-### Link the CLI globally
-
-```bash
-cd packages/cli && npm link
-```
-
-After this, the `aime` command is available system-wide.
+Run `make help` to see all available commands.
 
 ## Running the MCP Server
 
