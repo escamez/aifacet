@@ -49,6 +49,6 @@ pnpm-debug.log*
 tmp/
 .tmp/
 
-# Session notes (developer-local)
-NEXT_SESSION_INSTRUCTIONS.md
+# Developer notes (local)
+DEV_NOTES.md
 
