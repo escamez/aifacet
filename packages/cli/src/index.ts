@@ -53,6 +53,7 @@ function printHelp(): void {
   console.log('Vault:');
   console.log('  status                       Show vault and server status');
   console.log('  facets [category]            List facets (optionally by category)');
+  console.log('  check <provider>             Show what a provider is authorized to see');
   console.log('  add <category> <key> <value> Add a facet');
   console.log('  seed [--reset]               Load sample profile into vault');
   console.log('  reset                        Destroy and recreate empty vault');
@@ -161,6 +162,54 @@ function handleConfig(args: string[]): void {
   }
 }
 
+function handleCheck(args: string[]): void {
+  const providerId = args[1];
+  if (!providerId) {
+    console.error('Usage: aime check <provider>');
+    console.error('Example: aime check chatgpt');
+    process.exit(1);
+  }
+  const vault = openVault(args);
+  const all = vault.getFacets();
+  const authorized = vault.getAuthorizedFacets(providerId);
+  const blocked = all.filter(
+    (f) => !authorized.some((a) => a.category === f.category && a.key === f.key),
+  );
+
+  const categories = (facets: ReadonlyArray<{ category: string; key: string }>) => {
+    const grouped: Record<string, string[]> = {};
+    for (const f of facets) {
+      const list = grouped[f.category] ?? [];
+      list.push(f.key);
+      grouped[f.category] = list;
+    }
+    return grouped;
+  };
+
+  console.log(`Provider: ${providerId}`);
+  console.log(
+    `Total facets: ${all.length} | Visible: ${authorized.length} | Blocked: ${blocked.length}`,
+  );
+  console.log('');
+
+  const visible = categories(authorized);
+  if (Object.keys(visible).length > 0) {
+    console.log('VISIBLE:');
+    for (const [cat, keys] of Object.entries(visible)) {
+      console.log(`  ${cat}: ${keys.join(', ')}`);
+    }
+  }
+
+  console.log('');
+  const hidden = categories(blocked);
+  if (Object.keys(hidden).length > 0) {
+    console.log('BLOCKED:');
+    for (const [cat, keys] of Object.entries(hidden)) {
+      console.log(`  ${cat}: ${keys.join(', ')}`);
+    }
+  }
+}
+
 const commands: Record<string, (args: string[]) => void> = {
   start: (args) => startServer(args),
   stop: () => stopServer(),
@@ -173,6 +222,7 @@ const commands: Record<string, (args: string[]) => void> = {
     const vault = openVault(args);
     console.log(JSON.stringify(vault.getFacets(args[1]), null, 2));
   },
+  check: handleCheck,
   add: handleAdd,
   seed: handleSeed,
   reset: handleReset,
