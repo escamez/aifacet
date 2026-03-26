@@ -1,5 +1,5 @@
-import type { AccessLevel } from '@aime/schema';
-import type { Vault } from '@aime/vault';
+import type { AccessLevel } from '@aifacet/schema';
+import type { Vault } from '@aifacet/vault';
 import { Hono } from 'hono';
 import type { ApiPlugin } from './types.js';
 

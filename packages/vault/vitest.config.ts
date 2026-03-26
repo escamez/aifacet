@@ -7,7 +7,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@aime/schema': resolve(__dirname, '../schema/src/index.ts'),
+      '@aifacet/schema': resolve(__dirname, '../schema/src/index.ts'),
     },
   },
 });

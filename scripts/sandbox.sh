@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # =============================================================================
-# AIME Sandbox - Local validation script
+# AIFacet Sandbox - Local validation script
 # Creates a test vault, populates it with sample facets, and verifies the CLI
 # =============================================================================
 set -euo pipefail
 
-SANDBOX_DIR="${TMPDIR:-/tmp}/aime-sandbox-$$"
-export AIME_VAULT_PATH="$SANDBOX_DIR/vault"
-export AIME_PASSPHRASE="sandbox-test-passphrase"
+SANDBOX_DIR="${TMPDIR:-/tmp}/aifacet-sandbox-$$"
+export AIFACET_VAULT_PATH="$SANDBOX_DIR/vault"
+export AIFACET_PASSPHRASE="sandbox-test-passphrase"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -35,7 +35,7 @@ trap cleanup EXIT
 
 echo ""
 echo "=========================================="
-echo "  AIME Sandbox - Local Validation"
+echo "  AIFacet Sandbox - Local Validation"
 echo "=========================================="
 echo ""
 
@@ -45,7 +45,7 @@ info "Building all packages..."
 ok "Build complete"
 
 # --- Step 2: Create vault ---
-info "Creating vault at $AIME_VAULT_PATH"
+info "Creating vault at $AIFACET_VAULT_PATH"
 mkdir -p "$SANDBOX_DIR"
 
 $CLI status

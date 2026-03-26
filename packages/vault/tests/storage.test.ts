@@ -9,7 +9,7 @@ describe('EncryptedStorage', () => {
   let storage: EncryptedStorage;
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'aime-test-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'aifacet-test-'));
     storage = new EncryptedStorage({ basePath: tempDir });
   });
 

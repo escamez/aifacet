@@ -1,14 +1,14 @@
-# AIME — Consent Filtering Demo
+# AIFacet — Consent Filtering Demo
 
 > Protecting fundamental rights in the age of AI, one facet at a time.
 
-This walkthrough demonstrates how AIME enforces granular consent over personal data shared with AI providers. The scenarios map directly to GDPR Article 9 special categories: health, political opinions, sexual orientation, religious beliefs, and trade union membership.
+This walkthrough demonstrates how AIFacet enforces granular consent over personal data shared with AI providers. The scenarios map directly to GDPR Article 9 special categories: health, political opinions, sexual orientation, religious beliefs, and trade union membership.
 
 ## Setup
 
 ```bash
 pnpm build
-aime seed --reset
+aifacet seed --reset
 ```
 
 This creates the profile of **Elena Martínez**, a fictitious senior engineer. Her vault contains 36 facets across 11 categories, protected by 5 constitutional rules and 6 consent policies.
@@ -36,7 +36,7 @@ Elena uses a specialised health AI and also ChatGPT for general questions. She t
 ### What the health assistant sees
 
 ```bash
-aime check health-assistant
+aifacet check health-assistant
 ```
 
 ```
@@ -65,7 +65,7 @@ But it does NOT know about her mental health (hidden at facet level) or any Arti
 ### What ChatGPT sees
 
 ```bash
-aime check chatgpt
+aifacet check chatgpt
 ```
 
 ```
@@ -97,9 +97,9 @@ Elena's political views are protected by constitutional rule `const-001`:
 > "Never share my political views with any AI, ever."
 
 ```bash
-aime check chatgpt      # political: BLOCKED
-aime check claude        # political: BLOCKED
-aime check career-coach  # political: BLOCKED
+aifacet check chatgpt      # political: BLOCKED
+aifacet check claude        # political: BLOCKED
+aifacet check career-coach  # political: BLOCKED
 ```
 
 **Every provider gets the same answer: nothing.** There is no policy, no override, no API call that can extract Elena's political leaning. The data exists in her encrypted vault, but the consent layer makes it invisible to every AI. Period.
@@ -115,7 +115,7 @@ This is Article 9 protection, enforced at the technical level.
 Elena uses an AI career coach to help with job interviews and skill development. She grants it access to her professional context:
 
 ```bash
-aime check career-coach
+aifacet check career-coach
 ```
 
 ```
@@ -163,14 +163,14 @@ Every day, hundreds of millions of Europeans share deeply personal information w
 - **Uncontrollable** — users cannot see, limit, or erase what's stored
 - **Unencrypted** at the provider's discretion
 
-AIME inverts this model:
+AIFacet inverts this model:
 
 - **One vault**, owned by you, encrypted on your device
 - **One set of rules**, defined by you, enforced automatically
 - **Any AI** can connect via MCP — but only sees what you allow
 - **Deletion is absolute** — erase the vault, erase the data. Cryptographic certainty.
 
-The EU has the legal framework (GDPR, AI Act, Data Act). AIME provides the technical infrastructure to enforce it at the individual level.
+The EU has the legal framework (GDPR, AI Act, Data Act). AIFacet provides the technical infrastructure to enforce it at the individual level.
 
 ---
 
@@ -179,20 +179,20 @@ The EU has the legal framework (GDPR, AI Act, Data Act). AIME provides the techn
 ```bash
 # 1. Build and seed
 pnpm build
-aime seed --reset
+aifacet seed --reset
 
 # 2. See Elena's full profile (the owner sees everything)
-aime facets
+aifacet facets
 
 # 3. Check consent filtering per provider
-aime check health-assistant    # Sees health data (trusted)
-aime check chatgpt             # Health blocked (explicit deny)
-aime check career-coach        # Professional only
-aime check claude              # Professional only
-aime check random-ai           # Minimal access
+aifacet check health-assistant    # Sees health data (trusted)
+aifacet check chatgpt             # Health blocked (explicit deny)
+aifacet check career-coach        # Professional only
+aifacet check claude              # Professional only
+aifacet check random-ai           # Minimal access
 
 # 4. Verify constitutional blocks (same for ALL providers)
-aime check health-assistant | grep -A20 BLOCKED
-aime check chatgpt | grep -A20 BLOCKED
+aifacet check health-assistant | grep -A20 BLOCKED
+aifacet check chatgpt | grep -A20 BLOCKED
 # → political, financial, identity, religious, labor always blocked
 ```

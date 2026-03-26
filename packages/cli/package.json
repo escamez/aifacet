@@ -1,11 +1,11 @@
 {
-  "name": "@aime/cli",
+  "name": "@aifacet/cli",
   "version": "0.1.0",
-  "description": "CLI tool for managing your AIME context",
+  "description": "CLI tool for managing your AIFacet context",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "aime": "./dist/index.js"
+    "aifacet": "./dist/index.js"
   },
   "scripts": {
     "build": "tsup",
@@ -14,8 +14,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aime/schema": "workspace:*",
-    "@aime/vault": "workspace:*"
+    "@aifacet/schema": "workspace:*",
+    "@aifacet/vault": "workspace:*"
   },
   "files": [
     "dist"

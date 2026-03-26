@@ -32,10 +32,10 @@ importers:
 
   packages/api:
     dependencies:
-      '@aime/schema':
+      '@aifacet/schema':
         specifier: workspace:*
         version: link:../schema
-      '@aime/vault':
+      '@aifacet/vault':
         specifier: workspace:*
         version: link:../vault
       '@hono/node-server':
@@ -47,19 +47,19 @@ importers:
 
   packages/cli:
     dependencies:
-      '@aime/schema':
+      '@aifacet/schema':
         specifier: workspace:*
         version: link:../schema
-      '@aime/vault':
+      '@aifacet/vault':
         specifier: workspace:*
         version: link:../vault
 
   packages/mcp-server:
     dependencies:
-      '@aime/schema':
+      '@aifacet/schema':
         specifier: workspace:*
         version: link:../schema
-      '@aime/vault':
+      '@aifacet/vault':
         specifier: workspace:*
         version: link:../vault
       '@modelcontextprotocol/sdk':
@@ -73,7 +73,7 @@ importers:
 
   packages/vault:
     dependencies:
-      '@aime/schema':
+      '@aifacet/schema':
         specifier: workspace:*
         version: link:../schema
 

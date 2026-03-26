@@ -83,15 +83,15 @@ describe('Logger', () => {
   });
 
   describe('given a logger with a log file configured', () => {
-    const logDir = join(tmpdir(), `aime-logger-test-${Date.now()}`);
+    const logDir = join(tmpdir(), `aifacet-logger-test-${Date.now()}`);
     const logFile = join(logDir, 'test.log');
 
     beforeEach(() => {
-      process.env.AIME_LOG_FILE = logFile;
+      process.env.AIFACET_LOG_FILE = logFile;
     });
 
     afterEach(() => {
-      delete process.env.AIME_LOG_FILE;
+      delete process.env.AIFACET_LOG_FILE;
       if (existsSync(logDir)) {
         rmSync(logDir, { recursive: true, force: true });
       }

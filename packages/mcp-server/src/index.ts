@@ -8,7 +8,7 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error('Failed to start AIME MCP server:', error);
+  console.error('Failed to start AIFacet MCP server:', error);
   process.exit(1);
 });
 

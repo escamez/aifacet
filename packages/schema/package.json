@@ -1,7 +1,7 @@
 {
-  "name": "@aime/schema",
+  "name": "@aifacet/schema",
   "version": "0.1.0",
-  "description": "Core types and schema for the AIME context model",
+  "description": "Core types and schema for the AIFacet context model",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

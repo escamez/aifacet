@@ -15,9 +15,9 @@ COPY --from=deps /app/packages/schema/node_modules ./packages/schema/node_module
 COPY --from=deps /app/packages/vault/node_modules ./packages/vault/node_modules
 COPY --from=deps /app/packages/api/node_modules ./packages/api/node_modules
 COPY . .
-RUN pnpm --filter @aime/schema build && \
-    pnpm --filter @aime/vault build && \
-    pnpm --filter @aime/api build
+RUN pnpm --filter @aifacet/schema build && \
+    pnpm --filter @aifacet/vault build && \
+    pnpm --filter @aifacet/api build
 
 FROM base AS runtime
 COPY --from=build /app/packages/api/dist ./dist
@@ -27,7 +27,7 @@ COPY --from=build /app/packages/schema/dist ./packages/schema/dist
 COPY --from=build /app/packages/vault/dist ./packages/vault/dist
 
 ENV NODE_ENV=production
-ENV AIME_API_PORT=3100
+ENV AIFACET_API_PORT=3100
 EXPOSE 3100
 
 CMD ["node", "dist/index.js"]

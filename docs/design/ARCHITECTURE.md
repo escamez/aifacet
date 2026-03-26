@@ -1,4 +1,4 @@
-# AIME — Architecture Overview
+# AIFacet — Architecture Overview
 
 > This document provides a visual guide to the system architecture using Mermaid diagrams.
 > Diagrams are designed for dark mode compatibility (GitHub, Safari, VS Code).
@@ -11,19 +11,19 @@
 graph TB
     subgraph USER["👤 User Device"]
         direction TB
-        CLI["<b>@aime/cli</b><br/>Command Line Interface"]
-        WEB["<b>@aime/web</b><br/>Web UI Dashboard<br/><i>React · Vite · Tailwind</i>"]
+        CLI["<b>@aifacet/cli</b><br/>Command Line Interface"]
+        WEB["<b>@aifacet/web</b><br/>Web UI Dashboard<br/><i>React · Vite · Tailwind</i>"]
 
         subgraph CORE["Core Engine"]
             direction TB
-            SCHEMA["<b>@aime/schema</b><br/>Context Model &amp; Types<br/><i>Facets · Policies · Constitution</i>"]
-            VAULT["<b>@aime/vault</b><br/>Encrypted Storage<br/><i>AES-256-GCM · Local-first</i>"]
+            SCHEMA["<b>@aifacet/schema</b><br/>Context Model &amp; Types<br/><i>Facets · Policies · Constitution</i>"]
+            VAULT["<b>@aifacet/vault</b><br/>Encrypted Storage<br/><i>AES-256-GCM · Local-first</i>"]
             CONSENT["<b>Consent Manager</b><br/><i>Policies · Constitutional Rules</i><br/><i>Access Level Enforcement</i>"]
             AUDIT["<b>Audit Log</b><br/><i>Who accessed what, when</i>"]
         end
 
-        API["<b>@aime/api</b><br/>HTTP REST API<br/><i>Hono · Plugin-based</i>"]
-        MCP["<b>@aime/mcp-server</b><br/>Model Context Protocol<br/><i>Resources · Tools</i>"]
+        API["<b>@aifacet/api</b><br/>HTTP REST API<br/><i>Hono · Plugin-based</i>"]
+        MCP["<b>@aifacet/mcp-server</b><br/>Model Context Protocol<br/><i>Resources · Tools</i>"]
     end
 
     subgraph PROVIDERS["🤖 AI Providers"]
@@ -79,9 +79,9 @@ graph TB
 
 sequenceDiagram
     participant AI as 🤖 AI Provider
-    participant MCP as @aime/mcp-server
+    participant MCP as @aifacet/mcp-server
     participant Consent as Consent Manager
-    participant Vault as @aime/vault
+    participant Vault as @aifacet/vault
     participant Disk as 🔒 Encrypted Storage
 
     AI->>MCP: what_can_you_know(provider_id)
@@ -105,12 +105,12 @@ sequenceDiagram
 %%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#4a9eff', 'primaryTextColor': '#e8e8e8', 'primaryBorderColor': '#6bb3ff', 'lineColor': '#8899aa', 'secondaryColor': '#2d5a8a', 'tertiaryColor': '#1a3550'}}}%%
 
 graph LR
-    SCHEMA["@aime/schema<br/><i>Core Types</i>"]
-    VAULT["@aime/vault<br/><i>Storage + Consent</i>"]
-    MCP["@aime/mcp-server<br/><i>MCP Protocol</i>"]
-    CLI["@aime/cli<br/><i>CLI Tool</i>"]
-    API["@aime/api<br/><i>REST API</i>"]
-    WEB["@aime/web<br/><i>Web UI</i>"]
+    SCHEMA["@aifacet/schema<br/><i>Core Types</i>"]
+    VAULT["@aifacet/vault<br/><i>Storage + Consent</i>"]
+    MCP["@aifacet/mcp-server<br/><i>MCP Protocol</i>"]
+    CLI["@aifacet/cli<br/><i>CLI Tool</i>"]
+    API["@aifacet/api<br/><i>REST API</i>"]
+    WEB["@aifacet/web<br/><i>Web UI</i>"]
 
     VAULT --> SCHEMA
     MCP --> VAULT
@@ -133,7 +133,7 @@ graph LR
 
 ## API Plugin System
 
-The `@aime/api` package uses a plugin architecture built on [Hono](https://hono.dev). Each plugin is a self-contained module that registers routes on a base path. The main application composes all plugins under `/api`.
+The `@aifacet/api` package uses a plugin architecture built on [Hono](https://hono.dev). Each plugin is a self-contained module that registers routes on a base path. The main application composes all plugins under `/api`.
 
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#4a9eff', 'primaryTextColor': '#e8e8e8', 'primaryBorderColor': '#6bb3ff', 'lineColor': '#8899aa', 'secondaryColor': '#2d5a8a', 'tertiaryColor': '#1a3550'}}}%%
@@ -156,8 +156,8 @@ graph TB
     end
 
     subgraph CORE["Core Layer"]
-        VAULT["@aime/vault"]
-        SCHEMA["@aime/schema"]
+        VAULT["@aifacet/vault"]
+        SCHEMA["@aifacet/schema"]
     end
 
     MW --> PLUGINS
@@ -193,7 +193,7 @@ graph TB
 
 ## Web Plugin System
 
-The `@aime/web` package uses a plugin architecture built on React Router and a central registry. Each plugin registers navigation items and routes via side-effect imports.
+The `@aifacet/web` package uses a plugin architecture built on React Router and a central registry. Each plugin registers navigation items and routes via side-effect imports.
 
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#4a9eff', 'primaryTextColor': '#e8e8e8', 'primaryBorderColor': '#6bb3ff', 'lineColor': '#8899aa', 'secondaryColor': '#2d5a8a', 'tertiaryColor': '#1a3550'}}}%%
@@ -219,7 +219,7 @@ graph TB
     end
 
     subgraph BACKEND["Backend"]
-        BAPI["@aime/api<br/><i>HTTP REST API</i>"]
+        BAPI["@aifacet/api<br/><i>HTTP REST API</i>"]
     end
 
     ROUTER --> SHELL
@@ -300,7 +300,7 @@ flowchart TD
 ## Monorepo Structure
 
 ```
-aime/
+aifacet/
 ├── package.json              Root workspace config
 ├── pnpm-workspace.yaml       Workspace definition
 ├── docker-compose.yml        Docker stack (API + Web)
@@ -321,29 +321,29 @@ aime/
 │   └── sandbox.sh            Quick validation script
 │
 └── packages/
-    ├── schema/               @aime/schema — Core types
+    ├── schema/               @aifacet/schema — Core types
     │   ├── src/types/
     │   │   ├── access.ts     AccessLevel, ConsentPolicy, ConstitutionalRule
     │   │   ├── facet.ts      Facet, FacetMeta, categories
     │   │   └── context.ts    HumanContext, createEmptyContext
     │   └── tests/
     │
-    ├── vault/                @aime/vault — Encrypted storage
+    ├── vault/                @aifacet/vault — Encrypted storage
     │   ├── src/
     │   │   ├── storage.ts    AES-256-GCM encrypted file I/O
     │   │   └── vault.ts      Vault API (CRUD, consent enforcement)
     │   └── tests/
     │
-    ├── mcp-server/           @aime/mcp-server — Claude integration
+    ├── mcp-server/           @aifacet/mcp-server — Claude integration
     │   ├── src/
     │   │   └── index.ts      MCP resources + tools (about_me, what_can_you_know)
     │   └── tests/
     │
-    ├── cli/                  @aime/cli — Command line tool
+    ├── cli/                  @aifacet/cli — Command line tool
     │   └── src/
     │       └── index.ts      status, facets, add commands
     │
-    ├── api/                  @aime/api — HTTP REST API
+    ├── api/                  @aifacet/api — HTTP REST API
     │   ├── Dockerfile
     │   ├── src/
     │   │   ├── index.ts      Hono app, plugin composition, server startup
@@ -356,7 +356,7 @@ aime/
     │   │       └── import-export.ts  GET /api/transfer/export, POST /api/transfer/import
     │   └── tests/
     │
-    └── web/                  @aime/web — Web UI
+    └── web/                  @aifacet/web — Web UI
         ├── Dockerfile
         ├── src/
         │   ├── app.tsx       Root component, plugin imports, router
@@ -389,4 +389,4 @@ aime/
 ---
 
 *Document updated: 2026-03-25*
-*Project: AIME*
+*Project: AIFacet*

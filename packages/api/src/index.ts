@@ -1,4 +1,4 @@
-import { Vault } from '@aime/vault';
+import { Vault } from '@aifacet/vault';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
@@ -10,9 +10,9 @@ import { createImportExportPlugin } from './plugins/import-export.js';
 import { createPoliciesPlugin } from './plugins/policies.js';
 import type { ApiPlugin } from './plugins/types.js';
 
-const PORT = Number(process.env.AIME_API_PORT) || 3100;
-const VAULT_PATH = process.env.AIME_VAULT_PATH ?? `${process.env.HOME}/.aime/vault`;
-const PASSPHRASE = process.env.AIME_PASSPHRASE ?? 'default-dev-passphrase';
+const PORT = Number(process.env.AIFACET_API_PORT) || 3100;
+const VAULT_PATH = process.env.AIFACET_VAULT_PATH ?? `${process.env.HOME}/.aifacet/vault`;
+const PASSPHRASE = process.env.AIFACET_PASSPHRASE ?? 'default-dev-passphrase';
 
 function createApp(): Hono {
   const vault = Vault.open({ storagePath: VAULT_PATH, passphrase: PASSPHRASE });
@@ -50,7 +50,7 @@ function createApp(): Hono {
 const app = createApp();
 
 serve({ fetch: app.fetch, port: PORT }, (info) => {
-  console.log(`AIME API running on http://localhost:${info.port}`);
+  console.log(`AIFacet API running on http://localhost:${info.port}`);
 });
 
 export { createApp };

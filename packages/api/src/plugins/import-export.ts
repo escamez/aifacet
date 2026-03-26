@@ -1,5 +1,5 @@
-import type { Facet } from '@aime/schema';
-import type { Vault } from '@aime/vault';
+import type { Facet } from '@aifacet/schema';
+import type { Vault } from '@aifacet/vault';
 import { Hono } from 'hono';
 import type { ApiPlugin } from './types.js';
 
@@ -9,7 +9,7 @@ export function createImportExportPlugin(vault: Vault): ApiPlugin {
   /** Export entire context as JSON */
   app.get('/export', (c) => {
     const ctx = vault.getContext();
-    c.header('Content-Disposition', 'attachment; filename="aime-context.json"');
+    c.header('Content-Disposition', 'attachment; filename="aifacet-context.json"');
     return c.json(ctx);
   });
 

@@ -1,5 +1,5 @@
 import { existsSync, rmSync } from 'node:fs';
-import { Vault } from '@aime/vault';
+import { Vault } from '@aifacet/vault';
 import { getConfigPath, initConfigIfNeeded, loadConfig, saveConfig } from './config.js';
 import { serverStatus, startServer, stopServer } from './daemon.js';
 import { SEED_CONSTITUTION, SEED_FACETS, SEED_POLICIES } from './seed-data.js';
@@ -43,7 +43,7 @@ function openVault(argv: string[]): Vault {
 }
 
 function printHelp(): void {
-  console.log('Usage: aime <command>');
+  console.log('Usage: aifacet <command>');
   console.log('');
   console.log('Server:');
   console.log('  start                        Start the MCP server (background)');
@@ -68,7 +68,7 @@ function printHelp(): void {
 function handleStatus(args: string[]): void {
   const vault = openVault(args);
   const ctx = vault.getContext();
-  console.log('AIME Context Vault');
+  console.log('AIFacet Context Vault');
   console.log(`  ID:           ${ctx.id}`);
   console.log(`  Version:      ${ctx.version}`);
   console.log(`  Facets:       ${ctx.facets.length}`);
@@ -85,7 +85,7 @@ function handleAdd(args: string[]): void {
   const key = args[2];
   const value = args[3];
   if (!category || !key || !value) {
-    console.error('Usage: aime add <category> <key> <value>');
+    console.error('Usage: aifacet add <category> <key> <value>');
     process.exit(1);
   }
   const vault = openVault(args);
@@ -123,7 +123,7 @@ function handleConfigSet(args: string[]): void {
   const key = args[2];
   const value = args[3];
   if (!key || value === undefined) {
-    console.error('Usage: aime config set <key> <value>');
+    console.error('Usage: aifacet config set <key> <value>');
     process.exit(1);
   }
   const config = loadConfig();
@@ -146,7 +146,7 @@ function handleConfigSet(args: string[]): void {
 
 function handleConfigShow(): void {
   const config = loadConfig();
-  console.log(`AIME Configuration (${getConfigPath()})`);
+  console.log(`AIFacet Configuration (${getConfigPath()})`);
   console.log('');
   for (const [k, v] of Object.entries(config)) {
     const display = k === 'passphrase' ? '********' : String(v);
@@ -165,8 +165,8 @@ function handleConfig(args: string[]): void {
 function handleCheck(args: string[]): void {
   const providerId = args[1];
   if (!providerId) {
-    console.error('Usage: aime check <provider>');
-    console.error('Example: aime check chatgpt');
+    console.error('Usage: aifacet check <provider>');
+    console.error('Example: aifacet check chatgpt');
     process.exit(1);
   }
   const vault = openVault(args);

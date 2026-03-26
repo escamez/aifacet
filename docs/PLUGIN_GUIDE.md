@@ -1,8 +1,8 @@
-# AIME — Plugin Development Guide
+# AIFacet — Plugin Development Guide
 
-> How to extend AIME with new API and Web plugins.
+> How to extend AIFacet with new API and Web plugins.
 
-AIME uses a plugin-based architecture for both the backend API and the frontend Web UI. New features are added by creating plugins — self-contained modules that register routes (API) or pages (Web) without modifying the core application code.
+AIFacet uses a plugin-based architecture for both the backend API and the frontend Web UI. New features are added by creating plugins — self-contained modules that register routes (API) or pages (Web) without modifying the core application code.
 
 ## Table of Contents
 
@@ -69,7 +69,7 @@ app.route('/api', api);
 The simplest plugin — a single GET endpoint:
 
 ```typescript
-import type { Vault } from '@aime/vault';
+import type { Vault } from '@aifacet/vault';
 import { Hono } from 'hono';
 import type { ApiPlugin } from './types.js';
 
@@ -201,7 +201,7 @@ This example walks through creating an **"Audit"** plugin that shows access logs
 Create the file `packages/api/src/plugins/audit.ts`:
 
 ```typescript
-import type { Vault } from '@aime/vault';
+import type { Vault } from '@aifacet/vault';
 import { Hono } from 'hono';
 import type { ApiPlugin } from './types.js';
 
@@ -427,4 +427,4 @@ packages/web/src/plugins/
 ---
 
 *Document generated: 2026-03-25*
-*Project: AIME*
+*Project: AIFacet*

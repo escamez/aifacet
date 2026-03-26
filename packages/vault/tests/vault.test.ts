@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Facet } from '@aime/schema';
+import type { Facet } from '@aifacet/schema';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Vault } from '../src/vault.js';
 
@@ -10,7 +10,7 @@ describe('Vault', () => {
   const passphrase = 'test-vault-passphrase';
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'aime-vault-test-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'aifacet-vault-test-'));
   });
 
   afterEach(() => {

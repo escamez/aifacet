@@ -1,5 +1,5 @@
 {
-  "name": "@aime/vault",
+  "name": "@aifacet/vault",
   "version": "0.1.0",
   "description": "Local encrypted storage for human AI context",
   "type": "module",
@@ -17,7 +17,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aime/schema": "workspace:*"
+    "@aifacet/schema": "workspace:*"
   },
   "files": [
     "dist"

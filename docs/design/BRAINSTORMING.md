@@ -1,4 +1,4 @@
-# ContextMe — Design Brainstorming
+# AIFacet — Design Brainstorming
 
 > A system for creating and managing a portable "AI context digital fingerprint" for humans, enabling any AI to load a person's context and provide tailored responses regardless of provider.
 
@@ -25,7 +25,7 @@ Today, when you use ChatGPT, it learns about you. When you switch to Claude, you
 
 This is analogous to the early days of email — locked to one provider, no portability. Or phone numbers before number portability laws.
 
-**ContextMe flips this model:** the human owns their AI context, stores it locally, and selectively shares it with any AI they choose.
+**AIFacet flips this model:** the human owns their AI context, stores it locally, and selectively shares it with any AI they choose.
 
 ---
 
@@ -108,12 +108,12 @@ Inspired by Apple's privacy model (App Tracking Transparency, per-app permission
 ### Scopes (OAuth-like)
 
 ```
-contextme://physical/sizes          → pants: 42, shoes: 44, height: 178cm
-contextme://professional/role       → Senior DevOps Engineer
-contextme://professional/skills     → Go (expert), React (beginner)
-contextme://communication/style     → concise, technical, Spanish preferred
-contextme://health/allergies        → peanuts, penicillin
-contextme://political/leaning       → [BLOCKED]
+aifacet://physical/sizes          → pants: 42, shoes: 44, height: 178cm
+aifacet://professional/role       → Senior DevOps Engineer
+aifacet://professional/skills     → Go (expert), React (beginner)
+aifacet://communication/style     → concise, technical, Spanish preferred
+aifacet://health/allergies        → peanuts, penicillin
+aifacet://political/leaning       → [BLOCKED]
 ```
 
 ### Access Levels Per Facet
@@ -152,14 +152,14 @@ If the protocol is good enough, the ecosystem builds itself (like OAuth did).
 ### The Spec Would Define
 
 1. **Context Schema** — How facets are structured (JSON-LD with a defined vocabulary)
-2. **Discovery** — How an AI discovers that a user has a ContextMe profile
+2. **Discovery** — How an AI discovers that a user has a AIFacet profile
 3. **Request/Grant** — How access is negotiated (OAuth-like flow)
 4. **Transport** — How context data flows (REST API, MCP, or both)
 5. **Feedback** — How the AI returns new learnings for user approval
 
 ### Built on Existing Standards
 
-| Standard | Role in ContextMe |
+| Standard | Role in AIFacet |
 |----------|------------------|
 | **JSON-LD** | Data model for context facets |
 | **OAuth 2.0 / OIDC** | Consent flow |
@@ -172,9 +172,9 @@ If the protocol is good enough, the ecosystem builds itself (like OAuth did).
 
 ```json
 {
-  "@context": "https://contextme.org/schema/v1",
+  "@context": "https://aifacet.org/schema/v1",
   "@type": "HumanContext",
-  "id": "did:contextme:user123",
+  "id": "did:aifacet:user123",
   "version": "2026-03-25T10:00:00Z",
   "facets": {
     "physical": {
@@ -264,7 +264,7 @@ Like browser profiles or SSH keys — different identities for different context
 
 Apple already has the building blocks:
 
-| Apple Technology | ContextMe Equivalent |
+| Apple Technology | AIFacet Equivalent |
 |-----------------|---------------------|
 | **Keychain** | Secure storage for the Context Vault |
 | **HealthKit** | Health data with granular consent model |
@@ -327,4 +327,4 @@ Build the spec. Build the reference implementation. Let the community scale it.
 ---
 
 *Document generated: 2026-03-25*
-*Project: ContextMe*
+*Project: AIFacet*

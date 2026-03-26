@@ -9,7 +9,7 @@ export function Sidebar() {
     <aside className="flex h-screen w-60 flex-col border-r border-zinc-800 bg-zinc-950">
       <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-5">
         <Brain className="h-6 w-6 text-blue-400" />
-        <span className="text-lg font-semibold tracking-tight text-zinc-100">AIME</span>
+        <span className="text-lg font-semibold tracking-tight text-zinc-100">AIFacet</span>
         <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs text-blue-400">
           alpha
         </span>

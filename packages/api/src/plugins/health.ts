@@ -1,4 +1,4 @@
-import type { Vault } from '@aime/vault';
+import type { Vault } from '@aifacet/vault';
 import { Hono } from 'hono';
 import type { ApiPlugin } from './types.js';
 

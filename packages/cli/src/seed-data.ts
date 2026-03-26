@@ -1,4 +1,4 @@
-import type { ConsentPolicy, ConstitutionalRule, Facet } from '@aime/schema';
+import type { ConsentPolicy, ConstitutionalRule, Facet } from '@aifacet/schema';
 
 const now = new Date().toISOString();
 

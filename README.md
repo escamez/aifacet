@@ -1,8 +1,8 @@
-# AIME
+# AIFacet
 
 > Your AI context, owned by you. Portable across any AI.
 
-AIME is a personal context vault that stores your profile, preferences, and data in an encrypted local vault. AI assistants connect via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to learn about you — but only what you explicitly authorize.
+AIFacet is a personal context vault that stores your profile, preferences, and data in an encrypted local vault. AI assistants connect via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to learn about you — but only what you explicitly authorize.
 
 ## Key Features
 
@@ -16,12 +16,12 @@ AIME is a personal context vault that stores your profile, preferences, and data
 
 ```
 packages/
-  schema/       @aime/schema       Core types and context model
-  vault/        @aime/vault        Encrypted storage (AES-256-GCM)
-  mcp-server/   @aime/mcp-server   MCP server (stdio + HTTP transports)
-  cli/          @aime/cli          CLI for server and vault management
-  api/          @aime/api          REST API (Hono)
-  web/          @aime/web          Web UI (React)
+  schema/       @aifacet/schema       Core types and context model
+  vault/        @aifacet/vault        Encrypted storage (AES-256-GCM)
+  mcp-server/   @aifacet/mcp-server   MCP server (stdio + HTTP transports)
+  cli/          @aifacet/cli          CLI for server and vault management
+  api/          @aifacet/api          REST API (Hono)
+  web/          @aifacet/web          Web UI (React)
 ```
 
 ## Prerequisites
@@ -33,7 +33,7 @@ packages/
 
 ```bash
 # Clone the repository
-git clone <repo-url> && cd contextme
+git clone <repo-url> && cd aifacet
 
 # Check dependencies and set up everything
 make doctor    # verify Node 22+, pnpm 10+, openssl
@@ -57,12 +57,12 @@ Add to your `.mcp.json` or MCP client configuration:
 ```json
 {
   "mcpServers": {
-    "aime-context": {
+    "aifacet-context": {
       "command": "node",
       "args": ["packages/mcp-server/dist/index.js"],
       "env": {
-        "AIME_PASSPHRASE": "your-passphrase",
-        "AIME_VAULT_PATH": "/path/to/.aime/vault"
+        "AIFACET_PASSPHRASE": "your-passphrase",
+        "AIFACET_VAULT_PATH": "/path/to/.aifacet/vault"
       }
     }
   }
@@ -73,22 +73,22 @@ Add to your `.mcp.json` or MCP client configuration:
 
 ```bash
 # Start HTTP server (background daemon)
-aime start
+aifacet start
 
 # Start with HTTPS (auto-generated self-signed cert)
-aime start --https
+aifacet start --https
 
 # Start on a custom port
-aime start --port 4000
+aifacet start --port 4000
 
 # Start with your own TLS certificates
-aime start --https --tls-cert /path/to/cert.pem --tls-key /path/to/key.pem
+aifacet start --https --tls-cert /path/to/cert.pem --tls-key /path/to/key.pem
 
 # Stop the server
-aime stop
+aifacet stop
 
 # Restart
-aime restart
+aifacet restart
 ```
 
 The MCP endpoint is available at `http(s)://localhost:<port>/mcp`.
@@ -105,41 +105,41 @@ Health check at `http(s)://localhost:<port>/health`.
 
 ```
 Server:
-  aime start                        Start the MCP server (background)
-  aime stop                         Stop the MCP server
-  aime restart                      Restart the MCP server
+  aifacet start                        Start the MCP server (background)
+  aifacet stop                         Stop the MCP server
+  aifacet restart                      Restart the MCP server
 
 Vault:
-  aime status                       Show vault and server status
-  aime facets [category]            List facets (optionally by category)
-  aime add <category> <key> <value> Add a facet
-  aime seed [--reset]               Load sample profile into vault
-  aime reset                        Destroy and recreate empty vault
+  aifacet status                       Show vault and server status
+  aifacet facets [category]            List facets (optionally by category)
+  aifacet add <category> <key> <value> Add a facet
+  aifacet seed [--reset]               Load sample profile into vault
+  aifacet reset                        Destroy and recreate empty vault
 
 Config:
-  aime config                       Show current configuration
-  aime config set <key> <value>     Update a configuration value
+  aifacet config                       Show current configuration
+  aifacet config set <key> <value>     Update a configuration value
 ```
 
 ## Configuration
 
-Config file: `~/.aime/config.json`
+Config file: `~/.aifacet/config.json`
 
 ```json
 {
   "passphrase": "your-passphrase",
-  "vaultPath": "/Users/you/.aime/vault",
+  "vaultPath": "/Users/you/.aifacet/vault",
   "port": 3300,
   "https": false,
-  "logFile": "/Users/you/.aime/server.log"
+  "logFile": "/Users/you/.aifacet/server.log"
 }
 ```
 
 Resolution order (highest priority wins):
 
 1. **CLI arguments** (`--port`, `--https`, `--tls-cert`, `--tls-key`)
-2. **Environment variables** (`AIME_PASSPHRASE`, `AIME_VAULT_PATH`, `AIME_MCP_PORT`, `AIME_MCP_HTTPS`, `AIME_LOG_FILE`, `AIME_LOG_LEVEL`)
-3. **Config file** (`~/.aime/config.json`)
+2. **Environment variables** (`AIFACET_PASSPHRASE`, `AIFACET_VAULT_PATH`, `AIFACET_MCP_PORT`, `AIFACET_MCP_HTTPS`, `AIFACET_LOG_FILE`, `AIFACET_LOG_LEVEL`)
+3. **Config file** (`~/.aifacet/config.json`)
 4. **Built-in defaults**
 
 Config keys: `passphrase`, `vaultPath`, `port`, `https`, `tlsCert`, `tlsKey`, `logFile`
@@ -150,24 +150,24 @@ The MCP HTTP server writes structured logs to stderr and to a log file.
 
 | Path | Description |
 |------|-------------|
-| `~/.aime/server.log` | Server logs (requests, errors, lifecycle events) |
-| `~/.aime/config.json` | Configuration file |
-| `~/.aime/vault/` | Encrypted vault data |
-| `~/.aime/aime.pid` | PID file for background daemon |
+| `~/.aifacet/server.log` | Server logs (requests, errors, lifecycle events) |
+| `~/.aifacet/config.json` | Configuration file |
+| `~/.aifacet/vault/` | Encrypted vault data |
+| `~/.aifacet/aifacet.pid` | PID file for background daemon |
 
 ### Viewing logs
 
 ```bash
 # Follow server logs in real time
-tail -f ~/.aime/server.log
+tail -f ~/.aifacet/server.log
 
 # Check last 50 lines
-tail -50 ~/.aime/server.log
+tail -50 ~/.aifacet/server.log
 ```
 
 ### Log levels
 
-Set via `AIME_LOG_LEVEL` environment variable or at server startup:
+Set via `AIFACET_LOG_LEVEL` environment variable or at server startup:
 
 | Level | Label | Description |
 |-------|-------|-------------|
@@ -188,10 +188,10 @@ pnpm install
 pnpm build
 
 # Run all tests
-AIME_PASSPHRASE=test pnpm test
+AIFACET_PASSPHRASE=test pnpm test
 
 # Run tests in watch mode
-AIME_PASSPHRASE=test pnpm test:watch
+AIFACET_PASSPHRASE=test pnpm test:watch
 
 # Lint and format check
 pnpm lint
@@ -233,7 +233,7 @@ describe('given a vault with consent policies', () => {
 5. The vault enforces your rules and returns only authorized data
 
 ```
-AI Client ──MCP──► AIME Server ──► Vault
+AI Client ──MCP──► AIFacet Server ──► Vault
                                     ├── Facets (your data)
                                     ├── Policies (per-provider consent)
                                     └── Constitution (meta-rules)

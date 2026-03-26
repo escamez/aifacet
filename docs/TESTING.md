@@ -1,4 +1,4 @@
-# AIME — Testing & Validation Guide
+# AIFacet — Testing & Validation Guide
 
 > How to validate the system locally, including the API, Web UI, Docker, and Claude Code integration.
 
@@ -39,8 +39,8 @@ Start the API server in development mode:
 
 ```bash
 # From the project root
-export AIME_PASSPHRASE="test-passphrase"
-pnpm --filter @aime/api dev
+export AIFACET_PASSPHRASE="test-passphrase"
+pnpm --filter @aifacet/api dev
 ```
 
 The API runs on `http://localhost:3100` by default. All endpoints are prefixed with `/api`.
@@ -231,15 +231,15 @@ Make sure the API server is running first (the Web UI fetches data from it):
 
 ```bash
 # Terminal 1: Start the API
-export AIME_PASSPHRASE="test-passphrase"
-pnpm --filter @aime/api dev
+export AIFACET_PASSPHRASE="test-passphrase"
+pnpm --filter @aifacet/api dev
 ```
 
 ### Start the Web UI in Dev Mode
 
 ```bash
 # Terminal 2: Start the Web UI
-pnpm --filter @aime/web dev
+pnpm --filter @aifacet/web dev
 ```
 
 The Web UI starts on `http://localhost:5173` (Vite default) with hot module replacement.
@@ -257,10 +257,10 @@ From the project root, you can run both in parallel:
 
 ```bash
 # Terminal 1
-pnpm --filter @aime/api dev
+pnpm --filter @aifacet/api dev
 
 # Terminal 2
-pnpm --filter @aime/web dev
+pnpm --filter @aifacet/web dev
 ```
 
 ---
@@ -278,7 +278,7 @@ Docker-compose runs both the API and Web UI as containers, ideal for integration
 
 ```bash
 # From the project root
-export AIME_PASSPHRASE="my-secure-passphrase"
+export AIFACET_PASSPHRASE="my-secure-passphrase"
 docker compose up --build
 ```
 
@@ -324,7 +324,7 @@ This is the **most important validation** — proving that Claude can actually r
 
 ```bash
 # Set a passphrase (use something real, not this example)
-export AIME_PASSPHRASE="your-secure-passphrase"
+export AIFACET_PASSPHRASE="your-secure-passphrase"
 
 # Use the CLI to add your context
 node packages/cli/dist/index.js add physical height_cm 178
@@ -337,7 +337,7 @@ node packages/cli/dist/index.js status
 node packages/cli/dist/index.js facets
 ```
 
-Your vault is stored at `~/.aime/vault/` by default.
+Your vault is stored at `~/.aifacet/vault/` by default.
 
 ### Step 2: Configure Claude Code to use the MCP server
 
@@ -346,12 +346,12 @@ Add this to your Claude Code MCP settings (`~/.claude/settings.json` or project 
 ```json
 {
   "mcpServers": {
-    "aime-context": {
+    "aifacet-context": {
       "command": "node",
-      "args": ["/absolute/path/to/contextme/packages/mcp-server/dist/index.js"],
+      "args": ["/absolute/path/to/aifacet/packages/mcp-server/dist/index.js"],
       "env": {
-        "AIME_PASSPHRASE": "your-secure-passphrase",
-        "AIME_VAULT_PATH": "/Users/yourname/.aime/vault"
+        "AIFACET_PASSPHRASE": "your-secure-passphrase",
+        "AIFACET_VAULT_PATH": "/Users/yourname/.aifacet/vault"
       }
     }
   }
@@ -404,8 +404,8 @@ pnpm test
 pnpm test:watch
 
 # Run tests for a specific package
-pnpm --filter @aime/vault test
-pnpm --filter @aime/schema test
+pnpm --filter @aifacet/vault test
+pnpm --filter @aifacet/schema test
 
 # Run with coverage
 pnpm test:coverage
@@ -433,9 +433,9 @@ describe('Vault', () => {
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `AIME_VAULT_PATH` | `~/.aime/vault` | Path to the encrypted vault directory |
-| `AIME_PASSPHRASE` | `default-dev-passphrase` | Encryption passphrase (CHANGE THIS!) |
-| `AIME_API_PORT` | `3100` | Port for the HTTP API server |
+| `AIFACET_VAULT_PATH` | `~/.aifacet/vault` | Path to the encrypted vault directory |
+| `AIFACET_PASSPHRASE` | `default-dev-passphrase` | Encryption passphrase (CHANGE THIS!) |
+| `AIFACET_API_PORT` | `3100` | Port for the HTTP API server |
 
 ---
 

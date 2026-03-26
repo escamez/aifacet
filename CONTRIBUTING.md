@@ -1,10 +1,10 @@
-# Contributing to AIME
+# Contributing to AIFacet
 
-Thank you for your interest in contributing to AIME. This project aims to give individuals ownership and cryptographic control over their personal AI context. Every contribution strengthens this mission.
+Thank you for your interest in contributing to AIFacet. This project aims to give individuals ownership and cryptographic control over their personal AI context. Every contribution strengthens this mission.
 
 ## License
 
-AIME is licensed under the [European Union Public Licence v1.2 (EUPL-1.2)](./LICENSE). By contributing, you agree that your contributions will be licensed under the same terms.
+AIFacet is licensed under the [European Union Public Licence v1.2 (EUPL-1.2)](./LICENSE). By contributing, you agree that your contributions will be licensed under the same terms.
 
 ## Developer Certificate of Origin (DCO)
 
@@ -28,8 +28,8 @@ git commit --amend -s
 
 ```bash
 # Fork and clone the repository
-git clone https://github.com/<your-user>/aime.git
-cd aime
+git clone https://github.com/<your-user>/aifacet.git
+cd aifacet
 
 # Install dependencies
 pnpm install
@@ -38,7 +38,7 @@ pnpm install
 pnpm build
 
 # Run tests
-AIME_PASSPHRASE=test pnpm test
+AIFACET_PASSPHRASE=test pnpm test
 
 # Lint
 pnpm lint

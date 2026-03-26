@@ -1,7 +1,7 @@
 {
-  "name": "@aime/web",
+  "name": "@aifacet/web",
   "version": "0.1.0",
-  "description": "Web UI for AIME context management",
+  "description": "Web UI for AIFacet context management",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -34,7 +34,7 @@ export function ImportExportPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'aime-context.json';
+    a.download = 'aifacet-context.json';
     a.click();
     URL.revokeObjectURL(url);
   };

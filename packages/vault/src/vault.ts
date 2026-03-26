@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import type { ConsentPolicy, ConstitutionalRule, Facet, HumanContext } from '@aime/schema';
-import { createEmptyContext } from '@aime/schema';
+import type { ConsentPolicy, ConstitutionalRule, Facet, HumanContext } from '@aifacet/schema';
+import { createEmptyContext } from '@aifacet/schema';
 import { EncryptedStorage } from './storage.js';
 
 const CONTEXT_FILENAME = 'context.vault';

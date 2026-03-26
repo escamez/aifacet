@@ -28,12 +28,13 @@ export interface Logger {
  * Creates a minimal structured logger.
  *
  * - Writes to stderr (safe for MCP stdio transport).
- * - Optionally appends to a file when `AIME_LOG_FILE` is set.
+ * - Optionally appends to a file when `AIFACET_LOG_FILE` is set.
  * - No external dependencies.
  */
 export function createLogger(minLevel?: LogLevel): Logger {
-  const threshold = LEVEL_PRIORITY[minLevel ?? (process.env.AIME_LOG_LEVEL as LogLevel) ?? 'info'];
-  const logFile = process.env.AIME_LOG_FILE;
+  const threshold =
+    LEVEL_PRIORITY[minLevel ?? (process.env.AIFACET_LOG_LEVEL as LogLevel) ?? 'info'];
+  const logFile = process.env.AIFACET_LOG_FILE;
 
   if (logFile) {
     mkdirSync(dirname(logFile), { recursive: true });

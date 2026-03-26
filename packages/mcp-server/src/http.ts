@@ -16,13 +16,13 @@ const log = createLogger();
 /**
  * Resolves TLS configuration from environment variables.
  *
- * - `AIME_MCP_TLS_CERT` + `AIME_MCP_TLS_KEY` → use provided certificate files
- * - `AIME_MCP_HTTPS=true` (without cert paths) → auto-generate self-signed certificate
+ * - `AIFACET_MCP_TLS_CERT` + `AIFACET_MCP_TLS_KEY` → use provided certificate files
+ * - `AIFACET_MCP_HTTPS=true` (without cert paths) → auto-generate self-signed certificate
  * - Neither → plain HTTP
  */
 function resolveTls(): { cert: Buffer; key: Buffer } | undefined {
-  const certPath = process.env.AIME_MCP_TLS_CERT;
-  const keyPath = process.env.AIME_MCP_TLS_KEY;
+  const certPath = process.env.AIFACET_MCP_TLS_CERT;
+  const keyPath = process.env.AIFACET_MCP_TLS_KEY;
 
   if (certPath && keyPath) {
     if (!existsSync(certPath)) throw new Error(`TLS cert not found: ${certPath}`);
@@ -31,7 +31,7 @@ function resolveTls(): { cert: Buffer; key: Buffer } | undefined {
     return { cert: readFileSync(certPath), key: readFileSync(keyPath) };
   }
 
-  if (process.env.AIME_MCP_HTTPS === 'true') {
+  if (process.env.AIFACET_MCP_HTTPS === 'true') {
     return generateSelfSignedCert();
   }
 
@@ -40,7 +40,7 @@ function resolveTls(): { cert: Buffer; key: Buffer } | undefined {
 
 /** Generates a self-signed certificate using OpenSSL CLI. */
 function generateSelfSignedCert(): { cert: Buffer; key: Buffer } {
-  const dir = mkdtempSync(join(tmpdir(), 'aime-tls-'));
+  const dir = mkdtempSync(join(tmpdir(), 'aifacet-tls-'));
   const keyFile = join(dir, 'key.pem');
   const certFile = join(dir, 'cert.pem');
 
@@ -108,7 +108,7 @@ function setupGracefulShutdown(server: Server, transport: StreamableHTTPServerTr
 }
 
 async function main(): Promise<void> {
-  const port = Number(process.env.AIME_MCP_PORT ?? DEFAULT_PORT);
+  const port = Number(process.env.AIFACET_MCP_PORT ?? DEFAULT_PORT);
   const tls = resolveTls();
   const mcpServer = createServer();
 
@@ -164,7 +164,7 @@ async function main(): Promise<void> {
 
   const protocol = tls ? 'https' : 'http';
   server.listen(port, () => {
-    log.info('AIME MCP server listening', {
+    log.info('AIFacet MCP server listening', {
       protocol: protocol.toUpperCase(),
       url: `${protocol}://localhost:${port}/mcp`,
     });
@@ -173,6 +173,6 @@ async function main(): Promise<void> {
 
 main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
-  log.error('Failed to start AIME MCP HTTP server', { error: message });
+  log.error('Failed to start AIFacet MCP HTTP server', { error: message });
   process.exit(1);
 });

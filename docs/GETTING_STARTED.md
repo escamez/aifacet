@@ -1,8 +1,8 @@
-# AIME — Getting Started Guide
+# AIFacet — Getting Started Guide
 
 > Your AI context, owned by you. Portable across any AI.
 
-This guide walks you through setting up AIME locally, creating your first facets, and integrating with Claude Code via MCP.
+This guide walks you through setting up AIFacet locally, creating your first facets, and integrating with Claude Code via MCP.
 
 ## Table of Contents
 
@@ -54,8 +54,8 @@ npm install -g pnpm
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/contextme.git
-cd contextme
+git clone https://github.com/your-org/aifacet.git
+cd aifacet
 
 # Install all dependencies (workspace-aware)
 pnpm install
@@ -78,10 +78,10 @@ pnpm lint
 
 ## Project Structure
 
-AIME is a **pnpm monorepo** with the following packages:
+AIFacet is a **pnpm monorepo** with the following packages:
 
 ```
-contextme/
+aifacet/
 ├── package.json              Root workspace config
 ├── pnpm-workspace.yaml       Workspace definition
 ├── docker-compose.yml        Docker stack (API + Web)
@@ -98,27 +98,27 @@ contextme/
 │   └── sandbox.sh            Quick validation script
 │
 └── packages/
-    ├── schema/               @aime/schema
+    ├── schema/               @aifacet/schema
     │   Core types and context model (Facet, Policy,
     │   ConstitutionalRule, AccessLevel, HumanContext)
     │
-    ├── vault/                @aime/vault
+    ├── vault/                @aifacet/vault
     │   Encrypted local storage (AES-256-GCM).
     │   Single source of truth for all context data.
     │
-    ├── cli/                  @aime/cli
+    ├── cli/                  @aifacet/cli
     │   Command-line tool for managing context
     │   (add, list, status commands)
     │
-    ├── mcp-server/           @aime/mcp-server
+    ├── mcp-server/           @aifacet/mcp-server
     │   MCP server for Claude Code integration.
     │   Exposes context via Model Context Protocol.
     │
-    ├── api/                  @aime/api
+    ├── api/                  @aifacet/api
     │   HTTP REST API built with Hono.
     │   Plugin-based architecture for extensibility.
     │
-    └── web/                  @aime/web
+    └── web/                  @aifacet/web
         Web UI built with React + Vite + Tailwind.
         Plugin-based architecture for extensibility.
 ```
@@ -126,15 +126,15 @@ contextme/
 ### Package Dependencies
 
 ```
-@aime/schema       (no deps)     Core types
+@aifacet/schema       (no deps)     Core types
     ^
     |
-@aime/vault        (schema)       Encrypted storage + consent
+@aifacet/vault        (schema)       Encrypted storage + consent
     ^
     |
-@aime/cli          (vault, schema)  CLI tool
-@aime/mcp-server   (vault, schema)  MCP integration
-@aime/api          (vault, schema)  REST API
+@aifacet/cli          (vault, schema)  CLI tool
+@aifacet/mcp-server   (vault, schema)  MCP integration
+@aifacet/api          (vault, schema)  REST API
 ```
 
 ---
@@ -148,8 +148,8 @@ This is the recommended approach during development. Both servers support hot re
 **Terminal 1 — Start the API:**
 
 ```bash
-export AIME_PASSPHRASE="my-dev-passphrase"
-pnpm --filter @aime/api dev
+export AIFACET_PASSPHRASE="my-dev-passphrase"
+pnpm --filter @aifacet/api dev
 ```
 
 The API starts on `http://localhost:3100`.
@@ -157,7 +157,7 @@ The API starts on `http://localhost:3100`.
 **Terminal 2 — Start the Web UI:**
 
 ```bash
-pnpm --filter @aime/web dev
+pnpm --filter @aifacet/web dev
 ```
 
 The Web UI starts on `http://localhost:5173` (Vite default).
@@ -179,7 +179,7 @@ If you just want to manage context via the command line:
 ```bash
 pnpm build
 
-export AIME_PASSPHRASE="my-dev-passphrase"
+export AIFACET_PASSPHRASE="my-dev-passphrase"
 
 # Check vault status
 node packages/cli/dist/index.js status
@@ -199,7 +199,7 @@ Docker-compose runs the full stack (API + Web) in containers. No Node.js install
 
 ```bash
 # Set your passphrase
-export AIME_PASSPHRASE="my-secure-passphrase"
+export AIFACET_PASSPHRASE="my-secure-passphrase"
 
 # Build and start
 docker compose up --build
@@ -231,7 +231,7 @@ Facets are the building blocks of your AI context. Each facet has a **category**
 ### Via the CLI
 
 ```bash
-export AIME_PASSPHRASE="my-dev-passphrase"
+export AIFACET_PASSPHRASE="my-dev-passphrase"
 
 # Physical attributes
 node packages/cli/dist/index.js add physical height_cm 178
@@ -251,7 +251,7 @@ node packages/cli/dist/index.js facets
 
 ### Via the API
 
-With the API server running (`pnpm --filter @aime/api dev`):
+With the API server running (`pnpm --filter @aifacet/api dev`):
 
 ```bash
 # Add a facet
@@ -298,24 +298,24 @@ Edit your Claude Code settings file. Choose one:
 - **Global:** `~/.claude/settings.json`
 - **Per-project:** `.claude/settings.local.json`
 
-Add the `aime-context` MCP server:
+Add the `aifacet-context` MCP server:
 
 ```json
 {
   "mcpServers": {
-    "aime-context": {
+    "aifacet-context": {
       "command": "node",
-      "args": ["/absolute/path/to/contextme/packages/mcp-server/dist/index.js"],
+      "args": ["/absolute/path/to/aifacet/packages/mcp-server/dist/index.js"],
       "env": {
-        "AIME_PASSPHRASE": "your-secure-passphrase",
-        "AIME_VAULT_PATH": "/Users/yourname/.aime/vault"
+        "AIFACET_PASSPHRASE": "your-secure-passphrase",
+        "AIFACET_VAULT_PATH": "/Users/yourname/.aifacet/vault"
       }
     }
   }
 }
 ```
 
-> Replace `/absolute/path/to/contextme` with the actual path where you cloned the repo,
+> Replace `/absolute/path/to/aifacet` with the actual path where you cloned the repo,
 > and set your actual passphrase and vault path.
 
 ### Step 3: Restart Claude Code
@@ -339,18 +339,18 @@ Claude should respond with your stored facets. This confirms the full pipeline:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `AIME_PASSPHRASE` | `default-dev-passphrase` | Encryption passphrase for the vault. **Always change this for real data.** |
-| `AIME_VAULT_PATH` | `~/.aime/vault` | Filesystem path where the encrypted vault is stored. |
-| `AIME_API_PORT` | `3100` | Port the HTTP API server listens on. |
+| `AIFACET_PASSPHRASE` | `default-dev-passphrase` | Encryption passphrase for the vault. **Always change this for real data.** |
+| `AIFACET_VAULT_PATH` | `~/.aifacet/vault` | Filesystem path where the encrypted vault is stored. |
+| `AIFACET_API_PORT` | `3100` | Port the HTTP API server listens on. |
 
 ### Setting Environment Variables
 
 **For development (shell session):**
 
 ```bash
-export AIME_PASSPHRASE="my-dev-passphrase"
-export AIME_VAULT_PATH="$HOME/.aime/vault"
-export AIME_API_PORT=3100
+export AIFACET_PASSPHRASE="my-dev-passphrase"
+export AIFACET_VAULT_PATH="$HOME/.aifacet/vault"
+export AIFACET_API_PORT=3100
 ```
 
 **For Docker-Compose:**
@@ -358,13 +358,13 @@ export AIME_API_PORT=3100
 Create a `.env` file in the project root:
 
 ```env
-AIME_PASSPHRASE=my-secure-passphrase
+AIFACET_PASSPHRASE=my-secure-passphrase
 ```
 
 Or pass inline:
 
 ```bash
-AIME_PASSPHRASE="my-passphrase" docker compose up --build
+AIFACET_PASSPHRASE="my-passphrase" docker compose up --build
 ```
 
 **For MCP Server (Claude Code):**
@@ -374,4 +374,4 @@ Environment variables are set in the MCP configuration JSON under the `"env"` ke
 ---
 
 *Document generated: 2026-03-25*
-*Project: AIME*
+*Project: AIFacet*

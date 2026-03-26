@@ -23,7 +23,7 @@ function isRunning(pid: number): boolean {
 export function startServer(argv: string[] = []): void {
   const existingPid = readPid();
   if (existingPid && isRunning(existingPid)) {
-    console.log(`AIME server already running (PID ${existingPid})`);
+    console.log(`AIFacet server already running (PID ${existingPid})`);
     return;
   }
 
@@ -31,7 +31,7 @@ export function startServer(argv: string[] = []): void {
   const mcpHttp = getMcpHttpPath();
 
   if (!existsSync(mcpHttp)) {
-    console.error('MCP server not built. Run: pnpm --filter @aime/mcp-server build');
+    console.error('MCP server not built. Run: pnpm --filter @aifacet/mcp-server build');
     console.error(`Expected: ${mcpHttp}`);
     process.exit(1);
   }
@@ -51,12 +51,12 @@ export function startServer(argv: string[] = []): void {
 
   if (child.pid) {
     writeFileSync(getPidPath(), String(child.pid), 'utf-8');
-    console.log(`AIME server started (PID ${child.pid})`);
+    console.log(`AIFacet server started (PID ${child.pid})`);
     console.log(`  ${protocol.toUpperCase()} → ${protocol}://localhost:${config.port}/mcp`);
     console.log(`  Health → ${protocol}://localhost:${config.port}/health`);
     console.log(`  Logs   → ${config.logFile}`);
   } else {
-    console.error('Failed to start AIME server');
+    console.error('Failed to start AIFacet server');
     process.exit(1);
   }
 }
@@ -67,21 +67,21 @@ export function stopServer(): void {
   const pidPath = getPidPath();
 
   if (!pid) {
-    console.log('AIME server is not running (no PID file)');
+    console.log('AIFacet server is not running (no PID file)');
     return;
   }
 
   if (!isRunning(pid)) {
-    console.log(`AIME server is not running (stale PID ${pid})`);
+    console.log(`AIFacet server is not running (stale PID ${pid})`);
     unlinkSync(pidPath);
     return;
   }
 
   try {
     process.kill(pid, 'SIGTERM');
-    console.log(`AIME server stopped (PID ${pid})`);
+    console.log(`AIFacet server stopped (PID ${pid})`);
   } catch {
-    console.error(`Failed to stop AIME server (PID ${pid})`);
+    console.error(`Failed to stop AIFacet server (PID ${pid})`);
   }
 
   if (existsSync(pidPath)) {
@@ -96,7 +96,7 @@ export function serverStatus(): void {
   const running = pid ? isRunning(pid) : false;
   const protocol = config.https ? 'https' : 'http';
 
-  console.log('AIME MCP Server');
+  console.log('AIFacet MCP Server');
   console.log(`  Status:   ${running ? `running (PID ${pid})` : 'stopped'}`);
   console.log(`  Endpoint: ${protocol}://localhost:${config.port}/mcp`);
   console.log(`  HTTPS:    ${config.https ? 'enabled' : 'disabled'}`);

@@ -6,9 +6,9 @@ services:
     ports:
       - "3100:3100"
     environment:
-      - AIME_VAULT_PATH=/data/vault
-      - AIME_PASSPHRASE=${AIME_PASSPHRASE:-dev-passphrase}
-      - AIME_API_PORT=3100
+      - AIFACET_VAULT_PATH=/data/vault
+      - AIFACET_PASSPHRASE=${AIFACET_PASSPHRASE:-dev-passphrase}
+      - AIFACET_API_PORT=3100
     volumes:
       - vault-data:/data/vault
 

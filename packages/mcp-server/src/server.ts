@@ -1,24 +1,24 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { Vault } from '@aime/vault';
+import { Vault } from '@aifacet/vault';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-const DEFAULT_VAULT_PATH = join(homedir(), '.aime', 'vault');
-const DEFAULT_PASSPHRASE = process.env.AIME_PASSPHRASE ?? 'default-dev-passphrase';
+const DEFAULT_VAULT_PATH = join(homedir(), '.aifacet', 'vault');
+const DEFAULT_PASSPHRASE = process.env.AIFACET_PASSPHRASE ?? 'default-dev-passphrase';
 
-/** Creates and configures the AIME MCP server with all tools and resources. */
+/** Creates and configures the AIFacet MCP server with all tools and resources. */
 function createServer(): McpServer {
-  const vaultPath = process.env.AIME_VAULT_PATH ?? DEFAULT_VAULT_PATH;
-  const passphrase = process.env.AIME_PASSPHRASE ?? DEFAULT_PASSPHRASE;
+  const vaultPath = process.env.AIFACET_VAULT_PATH ?? DEFAULT_VAULT_PATH;
+  const passphrase = process.env.AIFACET_PASSPHRASE ?? DEFAULT_PASSPHRASE;
 
   const vault = Vault.open({ storagePath: vaultPath, passphrase });
   const server = new McpServer({
-    name: 'aime-context',
+    name: 'aifacet-context',
     version: '0.1.0',
   });
 
-  server.resource('context', 'aime://context', async (uri) => ({
+  server.resource('context', 'aifacet://context', async (uri) => ({
     contents: [
       {
         uri: uri.href,
@@ -30,7 +30,7 @@ function createServer(): McpServer {
 
   server.resource(
     'facets-by-category',
-    new ResourceTemplate('aime://facets/{category}', { list: undefined }),
+    new ResourceTemplate('aifacet://facets/{category}', { list: undefined }),
     async (uri, params) => {
       const category = params.category as string;
       const facets = vault.getFacets(category);

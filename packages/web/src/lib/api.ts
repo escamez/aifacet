@@ -48,7 +48,7 @@ export const api = {
     }),
 };
 
-// Lightweight types for the API client (avoids depending on @aime/schema in the browser)
+// Lightweight types for the API client (avoids depending on @aifacet/schema in the browser)
 export interface Facet {
   category: string;
   key: string;

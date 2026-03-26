@@ -1,12 +1,12 @@
 {
-  "name": "@aime/mcp-server",
+  "name": "@aifacet/mcp-server",
   "version": "0.1.0",
   "description": "MCP server that serves human context to AI providers",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "aime-mcp": "./dist/index.js"
+    "aifacet-mcp": "./dist/index.js"
   },
   "exports": {
     ".": {
@@ -22,8 +22,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aime/schema": "workspace:*",
-    "@aime/vault": "workspace:*",
+    "@aifacet/schema": "workspace:*",
+    "@aifacet/vault": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.12.1",
     "zod": "^4.3.6"
   },
