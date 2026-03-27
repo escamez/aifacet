@@ -56,7 +56,7 @@ Expected response:
 ```json
 {
   "status": "ok",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "facets": 0,
   "policies": 0,
   "constitution": 0

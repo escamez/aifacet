@@ -13,15 +13,15 @@ function resetVault(vaultPath: string): void {
   }
 }
 
-function seedVault(vault: Vault): void {
+async function seedVault(vault: Vault): Promise<void> {
   for (const facet of SEED_FACETS) {
-    vault.addFacet(facet);
+    await vault.addFacet(facet);
   }
   for (const rule of SEED_CONSTITUTION) {
-    vault.addConstitutionalRule(rule);
+    await vault.addConstitutionalRule(rule);
   }
   for (const policy of SEED_POLICIES) {
-    vault.addPolicy(policy);
+    await vault.addPolicy(policy);
   }
 
   const ctx = vault.getContext();
@@ -37,7 +37,7 @@ function seedVault(vault: Vault): void {
   }
 }
 
-function openVault(argv: string[]): Vault {
+async function openVault(argv: string[]): Promise<Vault> {
   const config = loadConfig(argv);
   return Vault.open({ storagePath: config.vaultPath, passphrase: config.passphrase });
 }
@@ -65,8 +65,8 @@ function printHelp(): void {
   console.log('Config keys: passphrase, vaultPath, port, https, tlsCert, tlsKey, logFile');
 }
 
-function handleStatus(args: string[]): void {
-  const vault = openVault(args);
+async function handleStatus(args: string[]): Promise<void> {
+  const vault = await openVault(args);
   const ctx = vault.getContext();
   console.log('AIFacet Context Vault');
   console.log(`  ID:           ${ctx.id}`);
@@ -80,7 +80,7 @@ function handleStatus(args: string[]): void {
   serverStatus();
 }
 
-function handleAdd(args: string[]): void {
+async function handleAdd(args: string[]): Promise<void> {
   const category = args[1];
   const key = args[2];
   const value = args[3];
@@ -88,8 +88,8 @@ function handleAdd(args: string[]): void {
     console.error('Usage: aifacet add <category> <key> <value>');
     process.exit(1);
   }
-  const vault = openVault(args);
-  vault.addFacet({
+  const vault = await openVault(args);
+  await vault.addFacet({
     category,
     key,
     value,
@@ -103,19 +103,19 @@ function handleAdd(args: string[]): void {
   console.log(`Added facet: ${category}/${key}`);
 }
 
-function handleSeed(args: string[]): void {
+async function handleSeed(args: string[]): Promise<void> {
   const seedConfig = loadConfig(args);
   if (args.includes('--reset')) {
     resetVault(seedConfig.vaultPath);
   }
-  const vault = openVault(args);
-  seedVault(vault);
+  const vault = await openVault(args);
+  await seedVault(vault);
 }
 
-function handleReset(args: string[]): void {
+async function handleReset(args: string[]): Promise<void> {
   const config = loadConfig(args);
   resetVault(config.vaultPath);
-  Vault.open({ storagePath: config.vaultPath, passphrase: config.passphrase });
+  await Vault.open({ storagePath: config.vaultPath, passphrase: config.passphrase });
   console.log(`Empty vault created at: ${config.vaultPath}`);
 }
 
@@ -162,14 +162,14 @@ function handleConfig(args: string[]): void {
   }
 }
 
-function handleCheck(args: string[]): void {
+async function handleCheck(args: string[]): Promise<void> {
   const providerId = args[1];
   if (!providerId) {
     console.error('Usage: aifacet check <provider>');
     console.error('Example: aifacet check chatgpt');
     process.exit(1);
   }
-  const vault = openVault(args);
+  const vault = await openVault(args);
   const all = vault.getFacets();
   const authorized = vault.getAuthorizedFacets(providerId);
   const blocked = all.filter(
@@ -210,7 +210,7 @@ function handleCheck(args: string[]): void {
   }
 }
 
-const commands: Record<string, (args: string[]) => void> = {
+const commands: Record<string, (args: string[]) => void | Promise<void>> = {
   start: (args) => startServer(args),
   stop: () => stopServer(),
   restart: (args) => {
@@ -218,8 +218,8 @@ const commands: Record<string, (args: string[]) => void> = {
     setTimeout(() => startServer(args), 500);
   },
   status: handleStatus,
-  facets: (args) => {
-    const vault = openVault(args);
+  facets: async (args) => {
+    const vault = await openVault(args);
     console.log(JSON.stringify(vault.getFacets(args[1]), null, 2));
   },
   check: handleCheck,
@@ -229,13 +229,13 @@ const commands: Record<string, (args: string[]) => void> = {
   config: handleConfig,
 };
 
-function main(): void {
+async function main(): Promise<void> {
   const args = process.argv.slice(2);
   initConfigIfNeeded();
 
   const handler = commands[args[0] ?? ''];
   if (handler) {
-    handler(args);
+    await handler(args);
   } else {
     printHelp();
   }

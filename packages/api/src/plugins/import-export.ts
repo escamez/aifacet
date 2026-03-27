@@ -26,7 +26,7 @@ export function createImportExportPlugin(vault: Vault): ApiPlugin {
       if (!facet.category || !facet.key || facet.value === undefined) {
         continue;
       }
-      vault.addFacet({
+      await vault.addFacet({
         category: facet.category,
         key: facet.key,
         value: facet.value,

@@ -1,12 +1,23 @@
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'node:crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import argon2 from 'argon2';
 
 const ALGORITHM = 'aes-256-gcm';
 const KEY_LENGTH = 32;
 const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
 const SALT_LENGTH = 32;
+
+/** Argon2id parameters tuned per OWASP recommendations. */
+const ARGON2_OPTIONS = {
+  type: argon2.argon2id,
+  memoryCost: 65536, // 64 MiB
+  timeCost: 3,
+  parallelism: 4,
+  hashLength: KEY_LENGTH,
+  raw: true,
+} as const;
 
 export interface StorageOptions {
   readonly basePath: string;
@@ -26,9 +37,9 @@ export class EncryptedStorage {
     }
   }
 
-  write(filename: string, data: string, passphrase: string): void {
+  async write(filename: string, data: string, passphrase: string): Promise<void> {
     const salt = randomBytes(SALT_LENGTH);
-    const key = scryptSync(passphrase, salt, KEY_LENGTH);
+    const key = await argon2.hash(passphrase, { ...ARGON2_OPTIONS, salt });
     const iv = randomBytes(IV_LENGTH);
 
     const cipher = createCipheriv(ALGORITHM, key, iv, { authTagLength: AUTH_TAG_LENGTH });
@@ -45,7 +56,7 @@ export class EncryptedStorage {
     writeFileSync(filePath, payload);
   }
 
-  read(filename: string, passphrase: string): string {
+  async read(filename: string, passphrase: string): Promise<string> {
     const filePath = join(this.basePath, filename);
     const payload = readFileSync(filePath);
 
@@ -57,7 +68,7 @@ export class EncryptedStorage {
     );
     const encrypted = payload.subarray(SALT_LENGTH + IV_LENGTH + AUTH_TAG_LENGTH);
 
-    const key = scryptSync(passphrase, salt, KEY_LENGTH);
+    const key = await argon2.hash(passphrase, { ...ARGON2_OPTIONS, salt });
 
     const decipher = createDecipheriv(ALGORITHM, key, iv, { authTagLength: AUTH_TAG_LENGTH });
     decipher.setAuthTag(authTag);

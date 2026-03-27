@@ -8,11 +8,11 @@ const DEFAULT_VAULT_PATH = join(homedir(), '.aifacet', 'vault');
 const DEFAULT_PASSPHRASE = process.env.AIFACET_PASSPHRASE ?? 'default-dev-passphrase';
 
 /** Creates and configures the AIFacet MCP server with all tools and resources. */
-function createServer(): McpServer {
+async function createServer(): Promise<McpServer> {
   const vaultPath = process.env.AIFACET_VAULT_PATH ?? DEFAULT_VAULT_PATH;
   const passphrase = process.env.AIFACET_PASSPHRASE ?? DEFAULT_PASSPHRASE;
 
-  const vault = Vault.open({ storagePath: vaultPath, passphrase });
+  const vault = await Vault.open({ storagePath: vaultPath, passphrase });
   const server = new McpServer({
     name: 'aifacet-context',
     version: '0.1.0',

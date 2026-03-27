@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { createServer as createHttpServer } from 'node:http';
 import { createServer as createHttpsServer } from 'node:https';
-import type { Server } from 'node:net';
+import type { AddressInfo, Server } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -85,32 +85,23 @@ async function handleMcp(
   }
 }
 
-/** Registers graceful shutdown handlers for the HTTP server. */
-function setupGracefulShutdown(server: Server, transport: StreamableHTTPServerTransport): void {
-  const shutdown = (signal: string) => {
-    log.info(`Received ${signal}, shutting down gracefully...`);
-    server.close(() => {
-      log.info('HTTP server closed');
-      transport.close().then(() => {
-        log.info('MCP transport closed');
-        process.exit(0);
-      });
-    });
-    // Force exit after 5 seconds if graceful shutdown stalls
-    setTimeout(() => {
-      log.warn('Graceful shutdown timed out, forcing exit');
-      process.exit(1);
-    }, 5000).unref();
-  };
-
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
+/** Handle returned by startHttpServer for managing the server lifecycle. */
+export interface McpHttpServer {
+  readonly server: Server;
+  readonly port: number;
+  readonly protocol: 'http' | 'https';
+  readonly url: string;
+  close(): Promise<void>;
 }
 
-async function main(): Promise<void> {
-  const port = Number(process.env.AIFACET_MCP_PORT ?? DEFAULT_PORT);
+/**
+ * Creates and starts the MCP HTTP server.
+ * Returns a handle to interact with and close the server.
+ */
+export async function startHttpServer(options?: { port?: number }): Promise<McpHttpServer> {
+  const port = options?.port ?? Number(process.env.AIFACET_MCP_PORT ?? DEFAULT_PORT);
   const tls = resolveTls();
-  const mcpServer = createServer();
+  const mcpServer = await createServer();
 
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: () => crypto.randomUUID(),
@@ -120,8 +111,8 @@ async function main(): Promise<void> {
   log.info('MCP server connected to HTTP transport');
 
   const handler = async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
-    const protocol = tls ? 'https' : 'http';
-    const url = new URL(req.url ?? '/', `${protocol}://${req.headers.host}`);
+    const proto = tls ? 'https' : 'http';
+    const url = new URL(req.url ?? '/', `${proto}://${req.headers.host}`);
 
     setCorsHeaders(res);
 
@@ -160,19 +151,55 @@ async function main(): Promise<void> {
     }
   });
 
-  setupGracefulShutdown(server, transport);
-
   const protocol = tls ? 'https' : 'http';
-  server.listen(port, () => {
-    log.info('AIFacet MCP server listening', {
-      protocol: protocol.toUpperCase(),
-      url: `${protocol}://localhost:${port}/mcp`,
+
+  return new Promise((resolve) => {
+    server.listen(port, () => {
+      const addr = server.address() as AddressInfo;
+      log.info('AIFacet MCP server listening', {
+        protocol: protocol.toUpperCase(),
+        url: `${protocol}://localhost:${addr.port}/mcp`,
+      });
+
+      resolve({
+        server,
+        port: addr.port,
+        protocol,
+        url: `${protocol}://localhost:${addr.port}`,
+        close: () =>
+          new Promise<void>((resolveClose) => {
+            server.close(() => {
+              transport.close().then(resolveClose);
+            });
+          }),
+      });
     });
   });
 }
 
-main().catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
-  log.error('Failed to start AIFacet MCP HTTP server', { error: message });
-  process.exit(1);
-});
+async function main(): Promise<void> {
+  const handle = await startHttpServer();
+
+  const shutdown = (signal: string) => {
+    log.info(`Received ${signal}, shutting down gracefully...`);
+    handle.close().then(() => {
+      log.info('Server closed');
+      process.exit(0);
+    });
+    setTimeout(() => {
+      log.warn('Graceful shutdown timed out, forcing exit');
+      process.exit(1);
+    }, 5000).unref();
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
+}
+
+if (!process.env.VITEST) {
+  main().catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    log.error('Failed to start AIFacet MCP HTTP server', { error: message });
+    process.exit(1);
+  });
+}

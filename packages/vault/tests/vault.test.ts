@@ -32,8 +32,8 @@ describe('Vault', () => {
 
   describe('given a new vault', () => {
     describe('when opening for the first time', () => {
-      it('then it should create an empty context', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
+      it('then it should create an empty context', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
         const ctx = vault.getContext();
 
         expect(ctx.id).toBeDefined();
@@ -44,12 +44,12 @@ describe('Vault', () => {
     });
 
     describe('when reopening an existing vault', () => {
-      it('then it should preserve the context', () => {
-        const vault1 = Vault.open({ storagePath: tempDir, passphrase });
+      it('then it should preserve the context', async () => {
+        const vault1 = await Vault.open({ storagePath: tempDir, passphrase });
         const originalId = vault1.getContext().id;
-        vault1.addFacet(createTestFacet());
+        await vault1.addFacet(createTestFacet());
 
-        const vault2 = Vault.open({ storagePath: tempDir, passphrase });
+        const vault2 = await Vault.open({ storagePath: tempDir, passphrase });
 
         expect(vault2.getContext().id).toBe(originalId);
         expect(vault2.getFacets()).toHaveLength(1);
@@ -59,11 +59,11 @@ describe('Vault', () => {
 
   describe('given a vault with facets', () => {
     describe('when adding a facet', () => {
-      it('then it should be retrievable', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
+      it('then it should be retrievable', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
         const facet = createTestFacet();
 
-        vault.addFacet(facet);
+        await vault.addFacet(facet);
 
         expect(vault.getFacets()).toHaveLength(1);
         expect(vault.getFacets()[0]?.key).toBe('height_cm');
@@ -71,10 +71,10 @@ describe('Vault', () => {
     });
 
     describe('when adding a facet with the same category and key', () => {
-      it('then it should replace the existing one', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
-        vault.addFacet(createTestFacet({ value: 178 }));
-        vault.addFacet(createTestFacet({ value: 180 }));
+      it('then it should replace the existing one', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
+        await vault.addFacet(createTestFacet({ value: 178 }));
+        await vault.addFacet(createTestFacet({ value: 180 }));
 
         expect(vault.getFacets()).toHaveLength(1);
         expect(vault.getFacets()[0]?.value).toBe(180);
@@ -82,10 +82,10 @@ describe('Vault', () => {
     });
 
     describe('when filtering facets by category', () => {
-      it('then it should return only matching facets', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
-        vault.addFacet(createTestFacet({ category: 'physical', key: 'height_cm' }));
-        vault.addFacet(createTestFacet({ category: 'professional', key: 'role' }));
+      it('then it should return only matching facets', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
+        await vault.addFacet(createTestFacet({ category: 'physical', key: 'height_cm' }));
+        await vault.addFacet(createTestFacet({ category: 'professional', key: 'role' }));
 
         expect(vault.getFacets('physical')).toHaveLength(1);
         expect(vault.getFacets('professional')).toHaveLength(1);
@@ -94,34 +94,34 @@ describe('Vault', () => {
     });
 
     describe('when removing a facet', () => {
-      it('then it should no longer be retrievable', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
-        vault.addFacet(createTestFacet());
+      it('then it should no longer be retrievable', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
+        await vault.addFacet(createTestFacet());
 
-        const removed = vault.removeFacet('physical', 'height_cm');
+        const removed = await vault.removeFacet('physical', 'height_cm');
 
         expect(removed).toBe(true);
         expect(vault.getFacets()).toHaveLength(0);
       });
 
-      it('then it should return false for non-existent facets', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
+      it('then it should return false for non-existent facets', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
 
-        expect(vault.removeFacet('physical', 'nonexistent')).toBe(false);
+        expect(await vault.removeFacet('physical', 'nonexistent')).toBe(false);
       });
     });
   });
 
   describe('given a vault with consent policies', () => {
     describe('when a constitutional rule blocks a category', () => {
-      it('then authorized facets should exclude that category', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
-        vault.addFacet(createTestFacet({ category: 'physical', key: 'height_cm' }));
-        vault.addFacet(
+      it('then authorized facets should exclude that category', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
+        await vault.addFacet(createTestFacet({ category: 'physical', key: 'height_cm' }));
+        await vault.addFacet(
           createTestFacet({ category: 'political', key: 'leaning', value: 'private' }),
         );
 
-        vault.addConstitutionalRule({
+        await vault.addConstitutionalRule({
           id: 'rule-1',
           description: 'Never share political views',
           facetCategory: 'political',
@@ -137,11 +137,11 @@ describe('Vault', () => {
     });
 
     describe('when a policy denies access for a provider', () => {
-      it('then that provider should not see the facet', () => {
-        const vault = Vault.open({ storagePath: tempDir, passphrase });
-        vault.addFacet(createTestFacet({ category: 'health', key: 'allergies' }));
+      it('then that provider should not see the facet', async () => {
+        const vault = await Vault.open({ storagePath: tempDir, passphrase });
+        await vault.addFacet(createTestFacet({ category: 'health', key: 'allergies' }));
 
-        vault.addPolicy({
+        await vault.addPolicy({
           facetCategory: 'health',
           accessLevel: 'denied',
           duration: 'persistent',

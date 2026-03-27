@@ -19,6 +19,11 @@
     "clean": "pnpm -r exec rm -rf dist && rm -rf coverage",
     "prepare": "husky"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "argon2"
+    ]
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",
     "@types/node": "^25.5.0",

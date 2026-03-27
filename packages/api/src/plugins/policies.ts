@@ -26,7 +26,7 @@ export function createPoliciesPlugin(vault: Vault): ApiPlugin {
       return c.json({ error: 'facetCategory, accessLevel, and duration are required' }, 400);
     }
 
-    vault.addPolicy({
+    await vault.addPolicy({
       ...body,
       createdAt: new Date().toISOString(),
     });

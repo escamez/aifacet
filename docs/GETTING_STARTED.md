@@ -54,7 +54,7 @@ npm install -g pnpm
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/aifacet.git
+git clone https://github.com/escamez/aifacet.git
 cd aifacet
 
 # Install all dependencies (workspace-aware)
@@ -89,10 +89,10 @@ aifacet/
 ├── vitest.workspace.ts       Test workspace config
 │
 ├── docs/                     Documentation
+│   ├── ARCHITECTURE.md       Architecture overview
 │   ├── GETTING_STARTED.md    This file
 │   ├── TESTING.md            Testing & validation guide
-│   ├── PLUGIN_GUIDE.md       Plugin development guide
-│   └── design/               Architecture & design docs
+│   └── PLUGIN_GUIDE.md       Plugin development guide
 │
 ├── scripts/                  Utility scripts
 │   └── sandbox.sh            Quick validation script

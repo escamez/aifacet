@@ -24,7 +24,7 @@ export function createConstitutionPlugin(vault: Vault): ApiPlugin {
       return c.json({ error: 'description, facetCategory, and maxAccessLevel are required' }, 400);
     }
 
-    vault.addConstitutionalRule({
+    await vault.addConstitutionalRule({
       id: crypto.randomUUID(),
       description: body.description,
       facetCategory: body.facetCategory,

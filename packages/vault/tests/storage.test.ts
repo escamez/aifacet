@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -19,22 +19,22 @@ describe('EncryptedStorage', () => {
 
   describe('given a new storage instance', () => {
     describe('when writing and reading data', () => {
-      it('then it should round-trip correctly', () => {
+      it('then it should round-trip correctly', async () => {
         const data = JSON.stringify({ hello: 'world', number: 42 });
         const passphrase = 'test-passphrase-123';
 
-        storage.write('test.vault', data, passphrase);
-        const result = storage.read('test.vault', passphrase);
+        await storage.write('test.vault', data, passphrase);
+        const result = await storage.read('test.vault', passphrase);
 
         expect(result).toBe(data);
       });
     });
 
     describe('when reading with wrong passphrase', () => {
-      it('then it should throw an error', () => {
-        storage.write('test.vault', 'secret data', 'correct-passphrase');
+      it('then it should throw an error', async () => {
+        await storage.write('test.vault', 'secret data', 'correct-passphrase');
 
-        expect(() => storage.read('test.vault', 'wrong-passphrase')).toThrow();
+        await expect(storage.read('test.vault', 'wrong-passphrase')).rejects.toThrow();
       });
     });
 
@@ -43,8 +43,8 @@ describe('EncryptedStorage', () => {
         expect(storage.exists('nonexistent.vault')).toBe(false);
       });
 
-      it('then it should return true after writing', () => {
-        storage.write('test.vault', 'data', 'pass');
+      it('then it should return true after writing', async () => {
+        await storage.write('test.vault', 'data', 'pass');
         expect(storage.exists('test.vault')).toBe(true);
       });
     });
@@ -52,14 +52,13 @@ describe('EncryptedStorage', () => {
 
   describe('given encrypted data', () => {
     describe('when writing the same data twice', () => {
-      it('then it should produce different ciphertexts (random IV/salt)', () => {
+      it('then it should produce different ciphertexts (random IV/salt)', async () => {
         const data = 'same data';
         const passphrase = 'same-pass';
 
-        storage.write('file1.vault', data, passphrase);
-        storage.write('file2.vault', data, passphrase);
+        await storage.write('file1.vault', data, passphrase);
+        await storage.write('file2.vault', data, passphrase);
 
-        const { readFileSync } = require('node:fs');
         const file1 = readFileSync(join(tempDir, 'file1.vault'));
         const file2 = readFileSync(join(tempDir, 'file2.vault'));
 

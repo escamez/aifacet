@@ -17,7 +17,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aifacet/schema": "workspace:*"
+    "@aifacet/schema": "workspace:*",
+    "argon2": "^0.44.0"
   },
   "files": [
     "dist"

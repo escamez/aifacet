@@ -310,12 +310,10 @@ aifacet/
 ├── .husky/pre-commit         Pre-commit: lint check
 │
 ├── docs/
+│   ├── ARCHITECTURE.md       Architecture overview (this file)
 │   ├── GETTING_STARTED.md    Getting started guide
 │   ├── TESTING.md            Testing & validation guide
-│   ├── PLUGIN_GUIDE.md       Plugin development guide
-│   ├── design/               Design documents & architecture
-│   ├── research/             Market analysis & research
-│   └── business/             Monetization & startup roadmap
+│   └── PLUGIN_GUIDE.md       Plugin development guide
 │
 ├── scripts/
 │   └── sandbox.sh            Quick validation script
@@ -334,9 +332,12 @@ aifacet/
     │   │   └── vault.ts      Vault API (CRUD, consent enforcement)
     │   └── tests/
     │
-    ├── mcp-server/           @aifacet/mcp-server — Claude integration
+    ├── mcp-server/           @aifacet/mcp-server — MCP protocol integration
     │   ├── src/
-    │   │   └── index.ts      MCP resources + tools (about_me, what_can_you_know)
+    │   │   ├── server.ts     MCP resources + tools (about_me, what_can_you_know)
+    │   │   ├── http.ts       Streamable HTTP transport server
+    │   │   ├── logger.ts     Structured logging utility
+    │   │   └── index.ts      Stdio transport entry point
     │   └── tests/
     │
     ├── cli/                  @aifacet/cli — Command line tool

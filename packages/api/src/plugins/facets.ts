@@ -27,7 +27,7 @@ export function createFacetsPlugin(vault: Vault): ApiPlugin {
       return c.json({ error: 'category, key, and value are required' }, 400);
     }
 
-    vault.addFacet({
+    await vault.addFacet({
       category: body.category,
       key: body.key,
       value: body.value,
@@ -43,9 +43,9 @@ export function createFacetsPlugin(vault: Vault): ApiPlugin {
   });
 
   /** Delete a facet by category and key */
-  app.delete('/:category/:key', (c) => {
+  app.delete('/:category/:key', async (c) => {
     const { category, key } = c.req.param();
-    const removed = vault.removeFacet(category, key);
+    const removed = await vault.removeFacet(category, key);
     if (!removed) {
       return c.json({ error: 'Facet not found' }, 404);
     }

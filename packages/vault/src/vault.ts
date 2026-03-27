@@ -28,17 +28,17 @@ export class Vault {
   /**
    * Opens an existing vault or creates a new one.
    */
-  static open(options: VaultOptions): Vault {
+  static async open(options: VaultOptions): Promise<Vault> {
     const storage = new EncryptedStorage({ basePath: options.storagePath });
 
     let context: HumanContext;
     if (storage.exists(CONTEXT_FILENAME)) {
-      const raw = storage.read(CONTEXT_FILENAME, options.passphrase);
+      const raw = await storage.read(CONTEXT_FILENAME, options.passphrase);
       context = JSON.parse(raw) as HumanContext;
     } else {
       const id = randomUUID();
       context = createEmptyContext(id);
-      storage.write(CONTEXT_FILENAME, JSON.stringify(context), options.passphrase);
+      await storage.write(CONTEXT_FILENAME, JSON.stringify(context), options.passphrase);
     }
 
     return new Vault(storage, options.passphrase, context);
@@ -52,7 +52,7 @@ export class Vault {
    * Adds a facet to the context. If a facet with the same category+key
    * already exists, it is replaced.
    */
-  addFacet(facet: Facet): void {
+  async addFacet(facet: Facet): Promise<void> {
     const filtered = this.context.facets.filter(
       (f) => !(f.category === facet.category && f.key === facet.key),
     );
@@ -61,13 +61,13 @@ export class Vault {
       facets: [...filtered, facet],
       updatedAt: new Date().toISOString(),
     };
-    this.persist();
+    await this.persist();
   }
 
   /**
    * Removes a facet by category and key.
    */
-  removeFacet(category: string, key: string): boolean {
+  async removeFacet(category: string, key: string): Promise<boolean> {
     const before = this.context.facets.length;
     const filtered = this.context.facets.filter((f) => !(f.category === category && f.key === key));
     if (filtered.length === before) return false;
@@ -77,7 +77,7 @@ export class Vault {
       facets: filtered,
       updatedAt: new Date().toISOString(),
     };
-    this.persist();
+    await this.persist();
     return true;
   }
 
@@ -92,25 +92,25 @@ export class Vault {
   /**
    * Adds a consent policy.
    */
-  addPolicy(policy: ConsentPolicy): void {
+  async addPolicy(policy: ConsentPolicy): Promise<void> {
     this.context = {
       ...this.context,
       policies: [...this.context.policies, policy],
       updatedAt: new Date().toISOString(),
     };
-    this.persist();
+    await this.persist();
   }
 
   /**
    * Adds a constitutional rule (immutable user-defined meta-policy).
    */
-  addConstitutionalRule(rule: ConstitutionalRule): void {
+  async addConstitutionalRule(rule: ConstitutionalRule): Promise<void> {
     this.context = {
       ...this.context,
       constitution: [...this.context.constitution, rule],
       updatedAt: new Date().toISOString(),
     };
-    this.persist();
+    await this.persist();
   }
 
   /**
@@ -140,7 +140,7 @@ export class Vault {
     });
   }
 
-  private persist(): void {
-    this.storage.write(CONTEXT_FILENAME, JSON.stringify(this.context), this.passphrase);
+  private async persist(): Promise<void> {
+    await this.storage.write(CONTEXT_FILENAME, JSON.stringify(this.context), this.passphrase);
   }
 }
