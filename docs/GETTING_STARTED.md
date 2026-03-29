@@ -373,5 +373,5 @@ Environment variables are set in the MCP configuration JSON under the `"env"` ke
 
 ---
 
-*Document generated: 2026-03-25*
+*Document created: 2026-03-25*
 *Project: AIFacet*

@@ -19,7 +19,7 @@ dist/
 *.swo
 *~
 
-# AI assistant config (developer-local)
+# Developer-local config
 .claude/
 .cursor/
 .continue/
