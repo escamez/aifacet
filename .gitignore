@@ -52,3 +52,9 @@ tmp/
 # Developer notes (local)
 DEV_NOTES.md
 
+# Certificates and keys
+*.pem
+*.key
+*.p12
+*.pfx
+
