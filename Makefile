@@ -142,16 +142,39 @@ reset: ## Destroy the vault and create a fresh empty one
 # ── Server ───────────────────────────────────────────────────
 
 .PHONY: start
-start: ## Start the MCP HTTP server (background)
+start: ## Start all services (API + Web + MCP)
+	@printf "\n\033[1m Starting AIFacet services...\033[0m\n\n"
+	@AIFACET_PASSPHRASE=$(PASS) aifacet start
+	@AIFACET_PASSPHRASE=$(PASS) pnpm --filter @aifacet/api dev &>/dev/null &
+	@pnpm --filter @aifacet/web dev &>/dev/null &
+	@sleep 2
+	@printf "\n\033[1m All services running:\033[0m\n\n"
+	@printf "  $(OK) MCP Server  → http://localhost:3300/mcp\n"
+	@printf "  $(OK) REST API    → http://localhost:3100/api/health\n"
+	@printf "  $(OK) Web UI      → http://localhost:3200\n"
+	@printf "\n  $(DIM)Stop all with: make stop$(RST)\n\n"
+
+.PHONY: start-mcp
+start-mcp: ## Start only the MCP HTTP server (background)
 	AIFACET_PASSPHRASE=$(PASS) aifacet start
 
+.PHONY: start-api
+start-api: ## Start only the REST API (foreground)
+	AIFACET_PASSPHRASE=$(PASS) pnpm --filter @aifacet/api dev
+
+.PHONY: start-web
+start-web: ## Start only the Web UI (foreground)
+	pnpm --filter @aifacet/web dev
+
 .PHONY: stop
-stop: ## Stop the MCP HTTP server
-	aifacet stop
+stop: ## Stop all services
+	@aifacet stop 2>/dev/null || true
+	@pkill -f "@aifacet/api" 2>/dev/null || true
+	@pkill -f "@aifacet/web" 2>/dev/null || true
+	@printf "$(OK) All services stopped\n"
 
 .PHONY: restart
-restart: ## Restart the MCP HTTP server
-	aifacet restart
+restart: stop start ## Restart all services
 
 .PHONY: status
 status: ## Show vault and server status
