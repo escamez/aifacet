@@ -33,7 +33,7 @@ packages/
 
 ```bash
 # Clone the repository
-git clone <repo-url> && cd aifacet
+git clone https://github.com/escamez/aifacet.git && cd aifacet
 
 # Check dependencies and set up everything
 make doctor    # verify Node 22+, pnpm 10+, openssl
@@ -44,6 +44,16 @@ make seed
 
 # Run the consent filtering demo
 make demo
+
+# Start all services (API + Web UI + MCP server)
+make start
+
+# Open Web UI at http://localhost:3200
+# REST API at http://localhost:3100
+# MCP server at http://localhost:3300
+
+# Stop everything
+make stop
 ```
 
 Run `make help` to see all available commands.
@@ -238,6 +248,17 @@ AI Client ──MCP──► AIFacet Server ──► Vault
                                     ├── Policies (per-provider consent)
                                     └── Constitution (meta-rules)
 ```
+
+## Documentation
+
+- [Getting Started](docs/GETTING_STARTED.md) — full setup guide, Docker, MCP configuration
+- [Architecture](docs/ARCHITECTURE.md) — system diagrams and package dependencies
+- [Testing](docs/TESTING.md) — API testing, Docker testing, MCP validation
+- [Plugin Guide](docs/PLUGIN_GUIDE.md) — how to extend AIFacet with new plugins
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for code standards, DCO sign-off, and security policy.
 
 ## License
 
