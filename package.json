@@ -3,6 +3,14 @@
   "private": true,
   "description": "Your AI context, owned by you. Portable across any AI.",
   "license": "EUPL-1.2",
+  "author": "Agustín Escámez",
+  "contributors": [
+    "Jesús Pérez González"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/escamez/aifacet"
+  },
   "engines": {
     "node": ">=22.0.0",
     "pnpm": ">=10.0.0"
