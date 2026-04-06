@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { type Facet, api } from '../../../lib/api.js';
+import { formatFacetValue } from '../../../lib/format.js';
 
 const CATEGORY_COLORS: Record<string, string> = {
   physical: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
@@ -155,7 +156,7 @@ export function FacetsPage() {
                   <CategoryBadge category={facet.category} />
                 </td>
                 <td className="px-4 py-3 font-mono text-xs text-zinc-300">{facet.key}</td>
-                <td className="px-4 py-3 text-zinc-100">{String(facet.value)}</td>
+                <td className="px-4 py-3 text-zinc-100">{formatFacetValue(facet.value)}</td>
                 <td className="px-4 py-3">
                   <span className="text-xs text-zinc-500">{facet.meta.accessLevel}</span>
                 </td>
