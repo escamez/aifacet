@@ -151,6 +151,30 @@ for desktop clients.
 
 ---
 
+## Cloud / Public Server Hosting
+
+Today AIFacet runs entirely on the user's machine. This is ideal for privacy but creates a
+friction point: services like Claude.ai Integrations or ChatGPT require the MCP server to be
+reachable at a public URL, which a local server cannot provide without extra tooling.
+
+A hosted option — where the vault and MCP server run on a server the user controls or trusts
+— would unlock these integrations without requiring any local setup. The key requirement is
+that the user always knows **where their data is stored** and under **which jurisdiction**.
+
+Directions worth exploring:
+
+- **Sovereign cloud deployment** — host on providers that guarantee data residency in a
+  specific country or region (e.g. EU-based clouds compliant with GDPR)
+- **Self-hosted on a personal VPS** — user deploys AIFacet on their own server; data stays
+  under their control, jurisdiction is their choice
+- **Bring-your-own-storage** — vault stored in a user-owned encrypted bucket (e.g. S3-compatible),
+  MCP server runs as a stateless layer on top
+
+The privacy-first principle does not require data to be local — it requires the user to know
+and choose where their data lives.
+
+---
+
 ## 💡 Far-Future Idea: AIFacet Mobile App
 
 A native iOS/Android app with a built-in conversational agent that lets users interact
