@@ -313,7 +313,8 @@ aifacet/
 │   ├── ARCHITECTURE.md       Architecture overview (this file)
 │   ├── GETTING_STARTED.md    Getting started guide
 │   ├── TESTING.md            Testing & validation guide
-│   └── PLUGIN_GUIDE.md       Plugin development guide
+│   ├── PLUGIN_GUIDE.md       Plugin development guide
+│   └── FUTURE-IDEAS.md       Future ideas and research directions
 │
 ├── scripts/
 │   └── sandbox.sh            Quick validation script
@@ -389,5 +390,37 @@ aifacet/
 
 ---
 
-*Document updated: 2026-03-25*
+## Future Ideas
+
+> The items below are **not committed or scheduled**. They are directions worth exploring.
+> See [`FUTURE-IDEAS.md`](./FUTURE-IDEAS.md) for the full list.
+
+### MCP Alternatives (Broker / Extension)
+
+The system diagram shows ChatGPT, Gemini, and "Any AI" connected via dashed lines labelled
+"Broker/Extension" and "Open Protocol". These dashed lines represent ideas for extending
+AIFacet to AI providers that do not support MCP natively — not features under active
+development:
+
+- **OpenAI Custom GPT Actions** — expose an OpenAPI endpoint so Custom GPTs can fetch
+  authorised facets from `@aifacet/api`
+- **Browser Extension** — inject context into AI web interfaces by calling the local REST API
+- **Generic OAuth Broker** — an intermediary that handles authorisation and proxies requests
+  to `@aifacet/api` for any provider
+
+In all cases the existing consent model (constitutional rules → policies → facet-level access)
+would apply identically — the integration layer changes, the privacy enforcement does not.
+
+### Local AI Agent (`@aifacet/agent`)
+
+An idea for a future premium feature: a synthesis layer on top of the vault where, instead of
+returning raw JSON facets, a new MCP tool (`ask_context`) would ask a **local LLM via Ollama**
+to produce a natural-language answer grounded in the user's authorised facets.
+
+Because Ollama runs on the user's machine, no personal data would leave the device — preserving
+the privacy-first design of AIFacet.
+
+---
+
+*Document updated: 2026-05-29*
 *Project: AIFacet*
